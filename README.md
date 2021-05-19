@@ -1,0 +1,2 @@
+# shepherd
+Shepherd is a service which organizes and monitors distributed computing resources over a network. Providing a web frontend to a system administrator, the Shepherd monitoring service will receive updates on system status from fixed interval heartbeats from each system. The web frontend will allow the system administrator to monitor device health and view automatically flagged abnormalities in system performance of their network. Records of performance will be kept, providing analytics over time for the network.
