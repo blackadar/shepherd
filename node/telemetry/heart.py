@@ -14,10 +14,10 @@ class Heart:
     Made with <3 at WIT
     """
 
-    def __init__(self, pool_id: int, node_id: int, rate: int = 1):
+    def __init__(self, pool_id: int, node_id: int, rate: float = 1):
         self.pool_id = pool_id
         self.node_id = node_id
-        self.rate = 1  # Hz  (Cycles per Second)
+        self.rate = rate  # Hz  (Cycles per Second)
 
         self._metrics = []  # List of Metrics (Interface)
         self._subscribers = []  # List of Subscribers (Interface)
