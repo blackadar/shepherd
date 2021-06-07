@@ -20,7 +20,7 @@ class Disk(Metric):
             partitions = {}
             for part in pts:
                 usage = psutil.disk_usage(part.mountpoint)
-                partitions[part] = {
+                partitions[part.device] = {
                         'device': part.device,
                         'mount_point': part.mountpoint,
                         'fstype': part.fstype,

@@ -6,6 +6,7 @@ from node.telemetry.heart import Heart
 from node.telemetry.metrics.cpu import CPU
 from node.telemetry.metrics.ram import RAM
 from node.telemetry.metrics.disk import Disk
+from node.telemetry.metrics.session import Session
 
 
 def main():
@@ -21,9 +22,11 @@ def main():
     cpu = CPU()
     ram = RAM()
     disk = Disk()
+    session = Session()
     heart.register_metric(cpu)
     heart.register_metric(ram)
     heart.register_metric(disk)
+    heart.register_metric(session)
 
 
 if __name__ == '__main__':

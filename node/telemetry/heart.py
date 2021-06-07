@@ -18,6 +18,7 @@ class Heart:
         self.pool_id = pool_id
         self.node_id = node_id
         self.rate = rate  # Hz  (Cycles per Second)
+        assert 0.1 <= self.rate <= 2  # SW Req. 2.1
 
         self._metrics = []  # List of Metrics (Interface)
         self._subscribers = []  # List of Subscribers (Interface)
