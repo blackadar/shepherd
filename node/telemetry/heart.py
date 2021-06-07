@@ -5,8 +5,8 @@ Subscribers can be notified (on "Pulse") when the data has been updated.
 """
 import threading
 import time
-from metric import Metric
-from subscriber import Subscriber
+from node.telemetry.metric import Metric
+from node.telemetry.subscriber import Subscriber
 
 
 class Heart:
@@ -23,7 +23,7 @@ class Heart:
         self._subscribers = []  # List of Subscribers (Interface)
         self._alive = True
         self._data = {
-                'last_update': 0
+                'time': 0
         }
         self._impulse = threading.Thread(target=self._beat)
         self._impulse_lock = threading.Lock()
@@ -45,15 +45,19 @@ class Heart:
             # Get all the updated info
             with self._impulse_lock:
                 for metric in self._metrics:
-                    self._data |= metric.measure()
-                self._data['last_update'] = int(time.time())
+                    self._data[metric.metric_name()] |= metric.measure()
+                self._data['time'] = int(time.time())
+
+                self._pulse()
 
             # Stop timing and calculate the remaining time until the next beat (if any)
             beat_end = time.perf_counter()
             elapsed = beat_end - beat_start
             if elapsed < (1/self.rate):
+                self._impulse_irregular = False
                 time.sleep((1/self.rate) - elapsed)
             else:
+                print(f"Warning: Metric measurement ({elapsed: .4f}s) exceeds requested heart rate of {self.rate} Hz!")
                 self._impulse_irregular = True
 
         self._impulse_death_ack = True
@@ -90,6 +94,7 @@ class Heart:
         assert isinstance(metric, Metric), f"{type(metric)} is not an implementation of telemetry.Metric."
         with self._impulse_lock:
             self._metrics.append(metric)
+            self._data[metric.metric_name()] = {}
 
     def register_subscriber(self, subscriber: Subscriber):
         """

@@ -9,7 +9,7 @@ class Metric(abc.ABC):
     Forces an interface to be available, which a data collector/producer will query.
     """
 
-    @abc.abstractmethod(property)
+    @abc.abstractmethod(abc.abstractproperty)
     def metric_name(self) -> str:
         """
         Define or Return a str identifier.
@@ -18,7 +18,7 @@ class Metric(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod(classmethod)
+    @abc.abstractmethod(abc.abstractclassmethod)
     def measure(self) -> dict:
         """
         Measure all promised metrics.

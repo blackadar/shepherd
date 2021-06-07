@@ -8,7 +8,7 @@ class Subscriber(abc.ABC):
     """
     Forces an interface to be available, which a data producer will call with an update.
     """
-    @abc.abstractmethod(property)
+    @abc.abstractmethod(abc.abstractproperty)
     def subscriber_name(self) -> str:
         """
         Define or Return a str identifier.
@@ -17,7 +17,7 @@ class Subscriber(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod(classmethod)
+    @abc.abstractmethod(abc.abstractclassmethod)
     def update(self, update: dict) -> None:
         """
         Receive an update from the data source.
@@ -25,3 +25,15 @@ class Subscriber(abc.ABC):
         :return:
         """
         pass
+
+
+class ConsoleSubscriber(Subscriber):
+    """
+    Prints all updates to the console.
+    """
+
+    def subscriber_name(self) -> str:
+        return "console"
+
+    def update(self, update: dict) -> None:
+        print(f"Update: {update}", flush=True)
