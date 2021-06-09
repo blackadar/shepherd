@@ -30,4 +30,4 @@ class Battery(Metric):
             }
             return data
         except Exception as e:
-            raise ValueError(f'Unable to collect RAM metrics: {e}')
+            raise ValueError(f'Unable to collect Battery metrics: {e}')

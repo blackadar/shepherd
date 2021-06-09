@@ -22,7 +22,7 @@ class Session(Metric):
                 users[user.name] = {
                         'terminal': user.terminal,
                         'host': user.host,
-                        'started': user.started,
+                        'started': int(user.started),
                         'pid': user.pid
                 }
             data = {
@@ -32,4 +32,4 @@ class Session(Metric):
             }
             return data
         except Exception as e:
-            raise ValueError(f'Unable to collect RAM metrics: {e}')
+            raise ValueError(f'Unable to collect Session metrics: {e}')
