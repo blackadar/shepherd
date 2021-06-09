@@ -2,7 +2,7 @@ syntax = "proto3";
 
 message Report {
   uint32 pool_id = 1;
-  uint32 session_id = 2;
+  uint32 node_id = 2;
   uint32 time_stamp = 3;
 
   // CPU
@@ -17,14 +17,14 @@ message Report {
   }
   // RAM
   message RAM {
-    uint32 virt_total = 1;
-    uint32 virt_available = 2;
-    uint32 virt_used = 3;
-    uint32 virt_free = 4;
-    uint32 swap_total = 5;
-    uint32 swap_used = 6;
-    uint32 swap_free = 7;
-    uint32 swap_percent = 8;
+    uint64 virt_total = 1;
+    uint64 virt_available = 2;
+    uint64 virt_used = 3;
+    uint64 virt_free = 4;
+    uint64 swap_total = 5;
+    uint64 swap_used = 6;
+    uint64 swap_free = 7;
+    float swap_percent = 8;
   }
   // Disk
   message Disk {
@@ -50,8 +50,8 @@ message Report {
   }
   // Session
   message Session {
-    uint32 boot_time = 1;
-    uint32 uptime = 2;
+    uint64 boot_time = 1;
+    uint64 uptime = 2;
     repeated string users = 3;
     repeated string terminals = 4;
     repeated string hosts = 5;
