@@ -105,5 +105,35 @@ class NetworkSubscriber(Subscriber):
         report.session.started_times.extend(started_times)
         report.session.pids.extend(pids)
 
+        uuids = []
+        loads = []
+        mem_percents = []
+        mem_totals = []
+        mem_useds = []
+        drivers = []
+        products = []
+        serials = []
+        display_modes = []
+        for gpu in update['gpu'].values():
+            uuids.append(gpu['uuid'])
+            loads.append(gpu['load'])
+            mem_percents.append(gpu['mem_percent'])
+            mem_totals.append(gpu['mem_total'])
+            mem_useds.append(gpu['mem_used'])
+            drivers.append(gpu['driver'])
+            products.append(gpu['product'])
+            serials.append(gpu['serial'])
+            display_modes.append(gpu['display_mode'])
+
+        report.gpu.uuids.extend(uuids)
+        report.gpu.loads.extend(loads)
+        report.gpu.mem_percents.extend(mem_percents)
+        report.gpu.mem_totals.extend(mem_totals)
+        report.gpu.mem_useds.extend(mem_useds)
+        report.gpu.drivers.extend(drivers)
+        report.gpu.products.extend(products)
+        report.gpu.serials.extend(serials)
+        report.gpu.display_modes.extend(display_modes)
+
         # TODO: Replace this Debug Print statement with ZeroMQ Network call.
         print(report.SerializeToString())
