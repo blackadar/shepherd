@@ -2,6 +2,7 @@
 Runs the Node module on the target machine.
 """
 from node.telemetry.subscriber import ConsoleSubscriber
+from node.net.pack import NetworkSubscriber
 from node.telemetry.heart import Heart
 from node.telemetry.metrics.cpu import CPU
 from node.telemetry.metrics.ram import RAM
@@ -18,7 +19,9 @@ def main():
 
     heart = Heart(0, 0, 0.5)
     debug = ConsoleSubscriber()
+    net = NetworkSubscriber()
     heart.register_subscriber(debug)
+    heart.register_subscriber(net)
 
     cpu = CPU()
     ram = RAM()

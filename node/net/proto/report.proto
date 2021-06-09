@@ -29,23 +29,23 @@ message Report {
   // Disk
   message Disk {
     repeated string partition_ids = 1;
-    repeated string mount_point = 2;
-    repeated string fstype = 3;
-    repeated int32 total = 4;
-    repeated int32 used = 5;
-    repeated int32 free = 6;
-    repeated float percent = 7;
-    uint32 read_cnt = 8;
-    uint32 write_cnt = 9;
-    uint32 read_cytes = 10;
-    uint32 write_bytes = 11;
-    uint32 read_time = 12;
-    uint32 write_time = 13;
+    repeated string mount_points = 2;
+    repeated string fstypes = 3;
+    repeated uint64 totals = 4;
+    repeated uint64 useds = 5;
+    repeated uint64 frees = 6;
+    repeated float percents = 7;
+    uint64 read_cnt = 8;
+    uint64 write_cnt = 9;
+    uint64 read_bytes = 10;
+    uint64 write_bytes = 11;
+    uint64 read_time = 12;
+    uint64 write_time = 13;
   }
   // Battery
   message Battery {
     float percent = 1;
-    uint32 secs_left = 2;
+    uint64 secs_left = 2;
     bool power_plugged = 3;
   }
   // Session
@@ -55,7 +55,8 @@ message Report {
     repeated string users = 3;
     repeated string terminals = 4;
     repeated string hosts = 5;
-    repeated uint32 started_time = 6;
+    repeated uint64 started_times = 6;
+    repeated uint64 pids = 7;
   }
 
   CPU cpu = 4;
