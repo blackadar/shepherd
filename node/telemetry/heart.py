@@ -24,6 +24,8 @@ class Heart:
         self._subscribers = []  # List of Subscribers (Interface)
         self._alive = True
         self._data = {
+                'node_id': self.node_id,
+                'pool_id': self.pool_id,
                 'time': 0
         }
         self._impulse = threading.Thread(target=self._beat)

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12proto/report.proto\"\xb9\x07\n\x06Report\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x12\n\nsession_id\x18\x02 \x01(\r\x12\x12\n\ntime_stamp\x18\x03 \x01(\r\x12\x18\n\x03\x63pu\x18\x04 \x01(\x0b\x32\x0b.Report.CPU\x12\x18\n\x03ram\x18\x05 \x01(\x0b\x32\x0b.Report.RAM\x12\x1a\n\x04\x64isk\x18\x06 \x01(\x0b\x32\x0c.Report.Disk\x12 \n\x07\x62\x61ttery\x18\x07 \x01(\x0b\x32\x0f.Report.Battery\x12 \n\x07session\x18\x08 \x01(\x0b\x32\x0f.Report.Session\x1a\x86\x01\n\x03\x43PU\x12\x15\n\rlogical_cores\x18\x01 \x01(\r\x12\x14\n\x0c\x63urrent_freq\x18\x02 \x01(\x02\x12\x10\n\x08max_freq\x18\x03 \x01(\x02\x12\x0f\n\x07percent\x18\x04 \x01(\x02\x12\x0e\n\x06load_1\x18\x05 \x01(\x02\x12\x0e\n\x06load_5\x18\x06 \x01(\x02\x12\x0f\n\x07load_15\x18\x07 \x01(\x02\x1a\xa7\x01\n\x03RAM\x12\x12\n\nvirt_total\x18\x01 \x01(\r\x12\x16\n\x0evirt_available\x18\x02 \x01(\r\x12\x11\n\tvirt_used\x18\x03 \x01(\r\x12\x11\n\tvirt_free\x18\x04 \x01(\r\x12\x12\n\nswap_total\x18\x05 \x01(\r\x12\x11\n\tswap_used\x18\x06 \x01(\r\x12\x11\n\tswap_free\x18\x07 \x01(\r\x12\x14\n\x0cswap_percent\x18\x08 \x01(\r\x1a\xf3\x01\n\x04\x44isk\x12\x15\n\rpartition_ids\x18\x01 \x03(\t\x12\x13\n\x0bmount_point\x18\x02 \x03(\t\x12\x0e\n\x06\x66stype\x18\x03 \x03(\t\x12\r\n\x05total\x18\x04 \x03(\x05\x12\x0c\n\x04used\x18\x05 \x03(\x05\x12\x0c\n\x04\x66ree\x18\x06 \x03(\x05\x12\x0f\n\x07percent\x18\x07 \x03(\x02\x12\x10\n\x08read_cnt\x18\x08 \x01(\r\x12\x11\n\twrite_cnt\x18\t \x01(\r\x12\x12\n\nread_cytes\x18\n \x01(\r\x12\x13\n\x0bwrite_bytes\x18\x0b \x01(\r\x12\x11\n\tread_time\x18\x0c \x01(\r\x12\x12\n\nwrite_time\x18\r \x01(\r\x1a\x44\n\x07\x42\x61ttery\x12\x0f\n\x07percent\x18\x01 \x01(\x02\x12\x11\n\tsecs_left\x18\x02 \x01(\r\x12\x15\n\rpower_plugged\x18\x03 \x01(\x08\x1as\n\x07Session\x12\x11\n\tboot_time\x18\x01 \x01(\r\x12\x0e\n\x06uptime\x18\x02 \x01(\r\x12\r\n\x05users\x18\x03 \x03(\t\x12\x11\n\tterminals\x18\x04 \x03(\t\x12\r\n\x05hosts\x18\x05 \x03(\t\x12\x14\n\x0cstarted_time\x18\x06 \x03(\rb\x06proto3'
+  serialized_pb=b'\n\x12proto/report.proto\"\xcc\x07\n\x06Report\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x0f\n\x07node_id\x18\x02 \x01(\r\x12\x12\n\ntime_stamp\x18\x03 \x01(\r\x12\x18\n\x03\x63pu\x18\x04 \x01(\x0b\x32\x0b.Report.CPU\x12\x18\n\x03ram\x18\x05 \x01(\x0b\x32\x0b.Report.RAM\x12\x1a\n\x04\x64isk\x18\x06 \x01(\x0b\x32\x0c.Report.Disk\x12 \n\x07\x62\x61ttery\x18\x07 \x01(\x0b\x32\x0f.Report.Battery\x12 \n\x07session\x18\x08 \x01(\x0b\x32\x0f.Report.Session\x1a\x86\x01\n\x03\x43PU\x12\x15\n\rlogical_cores\x18\x01 \x01(\r\x12\x14\n\x0c\x63urrent_freq\x18\x02 \x01(\x02\x12\x10\n\x08max_freq\x18\x03 \x01(\x02\x12\x0f\n\x07percent\x18\x04 \x01(\x02\x12\x0e\n\x06load_1\x18\x05 \x01(\x02\x12\x0e\n\x06load_5\x18\x06 \x01(\x02\x12\x0f\n\x07load_15\x18\x07 \x01(\x02\x1a\xa7\x01\n\x03RAM\x12\x12\n\nvirt_total\x18\x01 \x01(\x04\x12\x16\n\x0evirt_available\x18\x02 \x01(\x04\x12\x11\n\tvirt_used\x18\x03 \x01(\x04\x12\x11\n\tvirt_free\x18\x04 \x01(\x04\x12\x12\n\nswap_total\x18\x05 \x01(\x04\x12\x11\n\tswap_used\x18\x06 \x01(\x04\x12\x11\n\tswap_free\x18\x07 \x01(\x04\x12\x14\n\x0cswap_percent\x18\x08 \x01(\x02\x1a\xf9\x01\n\x04\x44isk\x12\x15\n\rpartition_ids\x18\x01 \x03(\t\x12\x14\n\x0cmount_points\x18\x02 \x03(\t\x12\x0f\n\x07\x66stypes\x18\x03 \x03(\t\x12\x0e\n\x06totals\x18\x04 \x03(\x04\x12\r\n\x05useds\x18\x05 \x03(\x04\x12\r\n\x05\x66rees\x18\x06 \x03(\x04\x12\x10\n\x08percents\x18\x07 \x03(\x02\x12\x10\n\x08read_cnt\x18\x08 \x01(\x04\x12\x11\n\twrite_cnt\x18\t \x01(\x04\x12\x12\n\nread_bytes\x18\n \x01(\x04\x12\x13\n\x0bwrite_bytes\x18\x0b \x01(\x04\x12\x11\n\tread_time\x18\x0c \x01(\x04\x12\x12\n\nwrite_time\x18\r \x01(\x04\x1a\x44\n\x07\x42\x61ttery\x12\x0f\n\x07percent\x18\x01 \x01(\x02\x12\x11\n\tsecs_left\x18\x02 \x01(\x04\x12\x15\n\rpower_plugged\x18\x03 \x01(\x08\x1a\x82\x01\n\x07Session\x12\x11\n\tboot_time\x18\x01 \x01(\x04\x12\x0e\n\x06uptime\x18\x02 \x01(\x04\x12\r\n\x05users\x18\x03 \x03(\t\x12\x11\n\tterminals\x18\x04 \x03(\t\x12\r\n\x05hosts\x18\x05 \x03(\t\x12\x15\n\rstarted_times\x18\x06 \x03(\x04\x12\x0c\n\x04pids\x18\x07 \x03(\x04\x62\x06proto3'
 )
 
 
@@ -94,8 +94,8 @@ _REPORT_CPU = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=239,
-  serialized_end=373,
+  serialized_start=236,
+  serialized_end=370,
 )
 
 _REPORT_RAM = _descriptor.Descriptor(
@@ -108,57 +108,57 @@ _REPORT_RAM = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='virt_total', full_name='Report.RAM.virt_total', index=0,
-      number=1, type=13, cpp_type=3, label=1,
+      number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='virt_available', full_name='Report.RAM.virt_available', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='virt_used', full_name='Report.RAM.virt_used', index=2,
-      number=3, type=13, cpp_type=3, label=1,
+      number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='virt_free', full_name='Report.RAM.virt_free', index=3,
-      number=4, type=13, cpp_type=3, label=1,
+      number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='swap_total', full_name='Report.RAM.swap_total', index=4,
-      number=5, type=13, cpp_type=3, label=1,
+      number=5, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='swap_used', full_name='Report.RAM.swap_used', index=5,
-      number=6, type=13, cpp_type=3, label=1,
+      number=6, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='swap_free', full_name='Report.RAM.swap_free', index=6,
-      number=7, type=13, cpp_type=3, label=1,
+      number=7, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='swap_percent', full_name='Report.RAM.swap_percent', index=7,
-      number=8, type=13, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
+      number=8, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -174,8 +174,8 @@ _REPORT_RAM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=376,
-  serialized_end=543,
+  serialized_start=373,
+  serialized_end=540,
 )
 
 _REPORT_DISK = _descriptor.Descriptor(
@@ -194,42 +194,42 @@ _REPORT_DISK = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='mount_point', full_name='Report.Disk.mount_point', index=1,
+      name='mount_points', full_name='Report.Disk.mount_points', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='fstype', full_name='Report.Disk.fstype', index=2,
+      name='fstypes', full_name='Report.Disk.fstypes', index=2,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='total', full_name='Report.Disk.total', index=3,
-      number=4, type=5, cpp_type=1, label=3,
+      name='totals', full_name='Report.Disk.totals', index=3,
+      number=4, type=4, cpp_type=4, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='used', full_name='Report.Disk.used', index=4,
-      number=5, type=5, cpp_type=1, label=3,
+      name='useds', full_name='Report.Disk.useds', index=4,
+      number=5, type=4, cpp_type=4, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='free', full_name='Report.Disk.free', index=5,
-      number=6, type=5, cpp_type=1, label=3,
+      name='frees', full_name='Report.Disk.frees', index=5,
+      number=6, type=4, cpp_type=4, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='percent', full_name='Report.Disk.percent', index=6,
+      name='percents', full_name='Report.Disk.percents', index=6,
       number=7, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -237,42 +237,42 @@ _REPORT_DISK = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='read_cnt', full_name='Report.Disk.read_cnt', index=7,
-      number=8, type=13, cpp_type=3, label=1,
+      number=8, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='write_cnt', full_name='Report.Disk.write_cnt', index=8,
-      number=9, type=13, cpp_type=3, label=1,
+      number=9, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='read_cytes', full_name='Report.Disk.read_cytes', index=9,
-      number=10, type=13, cpp_type=3, label=1,
+      name='read_bytes', full_name='Report.Disk.read_bytes', index=9,
+      number=10, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='write_bytes', full_name='Report.Disk.write_bytes', index=10,
-      number=11, type=13, cpp_type=3, label=1,
+      number=11, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='read_time', full_name='Report.Disk.read_time', index=11,
-      number=12, type=13, cpp_type=3, label=1,
+      number=12, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='write_time', full_name='Report.Disk.write_time', index=12,
-      number=13, type=13, cpp_type=3, label=1,
+      number=13, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -289,8 +289,8 @@ _REPORT_DISK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=546,
-  serialized_end=789,
+  serialized_start=543,
+  serialized_end=792,
 )
 
 _REPORT_BATTERY = _descriptor.Descriptor(
@@ -310,7 +310,7 @@ _REPORT_BATTERY = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='secs_left', full_name='Report.Battery.secs_left', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -334,8 +334,8 @@ _REPORT_BATTERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=791,
-  serialized_end=859,
+  serialized_start=794,
+  serialized_end=862,
 )
 
 _REPORT_SESSION = _descriptor.Descriptor(
@@ -348,14 +348,14 @@ _REPORT_SESSION = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='boot_time', full_name='Report.Session.boot_time', index=0,
-      number=1, type=13, cpp_type=3, label=1,
+      number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='uptime', full_name='Report.Session.uptime', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -382,8 +382,15 @@ _REPORT_SESSION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='started_time', full_name='Report.Session.started_time', index=5,
-      number=6, type=13, cpp_type=3, label=3,
+      name='started_times', full_name='Report.Session.started_times', index=5,
+      number=6, type=4, cpp_type=4, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='pids', full_name='Report.Session.pids', index=6,
+      number=7, type=4, cpp_type=4, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -400,8 +407,8 @@ _REPORT_SESSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=861,
-  serialized_end=976,
+  serialized_start=865,
+  serialized_end=995,
 )
 
 _REPORT = _descriptor.Descriptor(
@@ -420,7 +427,7 @@ _REPORT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='session_id', full_name='Report.session_id', index=1,
+      name='node_id', full_name='Report.node_id', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -481,7 +488,7 @@ _REPORT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=23,
-  serialized_end=976,
+  serialized_end=995,
 )
 
 _REPORT_CPU.containing_type = _REPORT

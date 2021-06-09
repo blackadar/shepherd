@@ -2,7 +2,7 @@ syntax = "proto3";
 
 message Report {
   uint32 pool_id = 1;
-  uint32 session_id = 2;
+  uint32 node_id = 2;
   uint32 time_stamp = 3;
 
   // CPU
@@ -17,45 +17,46 @@ message Report {
   }
   // RAM
   message RAM {
-    uint32 virt_total = 1;
-    uint32 virt_available = 2;
-    uint32 virt_used = 3;
-    uint32 virt_free = 4;
-    uint32 swap_total = 5;
-    uint32 swap_used = 6;
-    uint32 swap_free = 7;
-    uint32 swap_percent = 8;
+    uint64 virt_total = 1;
+    uint64 virt_available = 2;
+    uint64 virt_used = 3;
+    uint64 virt_free = 4;
+    uint64 swap_total = 5;
+    uint64 swap_used = 6;
+    uint64 swap_free = 7;
+    float swap_percent = 8;
   }
   // Disk
   message Disk {
     repeated string partition_ids = 1;
-    repeated string mount_point = 2;
-    repeated string fstype = 3;
-    repeated int32 total = 4;
-    repeated int32 used = 5;
-    repeated int32 free = 6;
-    repeated float percent = 7;
-    uint32 read_cnt = 8;
-    uint32 write_cnt = 9;
-    uint32 read_cytes = 10;
-    uint32 write_bytes = 11;
-    uint32 read_time = 12;
-    uint32 write_time = 13;
+    repeated string mount_points = 2;
+    repeated string fstypes = 3;
+    repeated uint64 totals = 4;
+    repeated uint64 useds = 5;
+    repeated uint64 frees = 6;
+    repeated float percents = 7;
+    uint64 read_cnt = 8;
+    uint64 write_cnt = 9;
+    uint64 read_bytes = 10;
+    uint64 write_bytes = 11;
+    uint64 read_time = 12;
+    uint64 write_time = 13;
   }
   // Battery
   message Battery {
     float percent = 1;
-    uint32 secs_left = 2;
+    uint64 secs_left = 2;
     bool power_plugged = 3;
   }
   // Session
   message Session {
-    uint32 boot_time = 1;
-    uint32 uptime = 2;
+    uint64 boot_time = 1;
+    uint64 uptime = 2;
     repeated string users = 3;
     repeated string terminals = 4;
     repeated string hosts = 5;
-    repeated uint32 started_time = 6;
+    repeated uint64 started_times = 6;
+    repeated uint64 pids = 7;
   }
 
   CPU cpu = 4;
