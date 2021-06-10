@@ -1,6 +1,7 @@
 """
 Runs the Node module on the target machine.
 """
+from node.telemetry.metrics.gpu import GPU
 from node.telemetry.subscriber import ConsoleSubscriber
 from node.net.pack import NetworkSubscriber
 from node.telemetry.heart import Heart
@@ -24,11 +25,13 @@ def main():
     heart.register_subscriber(net)
 
     cpu = CPU()
+    gpu = GPU()
     ram = RAM()
     disk = Disk()
     session = Session()
     battery = Battery()
     heart.register_metric(cpu)
+    heart.register_metric(gpu)
     heart.register_metric(ram)
     heart.register_metric(disk)
     heart.register_metric(session)

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12proto/report.proto\"\xcc\x07\n\x06Report\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x0f\n\x07node_id\x18\x02 \x01(\r\x12\x12\n\ntime_stamp\x18\x03 \x01(\r\x12\x18\n\x03\x63pu\x18\x04 \x01(\x0b\x32\x0b.Report.CPU\x12\x18\n\x03ram\x18\x05 \x01(\x0b\x32\x0b.Report.RAM\x12\x1a\n\x04\x64isk\x18\x06 \x01(\x0b\x32\x0c.Report.Disk\x12 \n\x07\x62\x61ttery\x18\x07 \x01(\x0b\x32\x0f.Report.Battery\x12 \n\x07session\x18\x08 \x01(\x0b\x32\x0f.Report.Session\x1a\x86\x01\n\x03\x43PU\x12\x15\n\rlogical_cores\x18\x01 \x01(\r\x12\x14\n\x0c\x63urrent_freq\x18\x02 \x01(\x02\x12\x10\n\x08max_freq\x18\x03 \x01(\x02\x12\x0f\n\x07percent\x18\x04 \x01(\x02\x12\x0e\n\x06load_1\x18\x05 \x01(\x02\x12\x0e\n\x06load_5\x18\x06 \x01(\x02\x12\x0f\n\x07load_15\x18\x07 \x01(\x02\x1a\xa7\x01\n\x03RAM\x12\x12\n\nvirt_total\x18\x01 \x01(\x04\x12\x16\n\x0evirt_available\x18\x02 \x01(\x04\x12\x11\n\tvirt_used\x18\x03 \x01(\x04\x12\x11\n\tvirt_free\x18\x04 \x01(\x04\x12\x12\n\nswap_total\x18\x05 \x01(\x04\x12\x11\n\tswap_used\x18\x06 \x01(\x04\x12\x11\n\tswap_free\x18\x07 \x01(\x04\x12\x14\n\x0cswap_percent\x18\x08 \x01(\x02\x1a\xf9\x01\n\x04\x44isk\x12\x15\n\rpartition_ids\x18\x01 \x03(\t\x12\x14\n\x0cmount_points\x18\x02 \x03(\t\x12\x0f\n\x07\x66stypes\x18\x03 \x03(\t\x12\x0e\n\x06totals\x18\x04 \x03(\x04\x12\r\n\x05useds\x18\x05 \x03(\x04\x12\r\n\x05\x66rees\x18\x06 \x03(\x04\x12\x10\n\x08percents\x18\x07 \x03(\x02\x12\x10\n\x08read_cnt\x18\x08 \x01(\x04\x12\x11\n\twrite_cnt\x18\t \x01(\x04\x12\x12\n\nread_bytes\x18\n \x01(\x04\x12\x13\n\x0bwrite_bytes\x18\x0b \x01(\x04\x12\x11\n\tread_time\x18\x0c \x01(\x04\x12\x12\n\nwrite_time\x18\r \x01(\x04\x1a\x44\n\x07\x42\x61ttery\x12\x0f\n\x07percent\x18\x01 \x01(\x02\x12\x11\n\tsecs_left\x18\x02 \x01(\x04\x12\x15\n\rpower_plugged\x18\x03 \x01(\x08\x1a\x82\x01\n\x07Session\x12\x11\n\tboot_time\x18\x01 \x01(\x04\x12\x0e\n\x06uptime\x18\x02 \x01(\x04\x12\r\n\x05users\x18\x03 \x03(\t\x12\x11\n\tterminals\x18\x04 \x03(\t\x12\r\n\x05hosts\x18\x05 \x03(\t\x12\x15\n\rstarted_times\x18\x06 \x03(\x04\x12\x0c\n\x04pids\x18\x07 \x03(\x04\x62\x06proto3'
+  serialized_pb=b'\n\x12proto/report.proto\"\x94\t\n\x06Report\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x0f\n\x07node_id\x18\x02 \x01(\r\x12\x12\n\ntime_stamp\x18\x03 \x01(\r\x12\x18\n\x03\x63pu\x18\x04 \x01(\x0b\x32\x0b.Report.CPU\x12\x18\n\x03ram\x18\x05 \x01(\x0b\x32\x0b.Report.RAM\x12\x1a\n\x04\x64isk\x18\x06 \x01(\x0b\x32\x0c.Report.Disk\x12 \n\x07\x62\x61ttery\x18\x07 \x01(\x0b\x32\x0f.Report.Battery\x12 \n\x07session\x18\x08 \x01(\x0b\x32\x0f.Report.Session\x12\x18\n\x03gpu\x18\t \x01(\x0b\x32\x0b.Report.GPU\x1a\x86\x01\n\x03\x43PU\x12\x15\n\rlogical_cores\x18\x01 \x01(\r\x12\x14\n\x0c\x63urrent_freq\x18\x02 \x01(\x02\x12\x10\n\x08max_freq\x18\x03 \x01(\x02\x12\x0f\n\x07percent\x18\x04 \x01(\x02\x12\x0e\n\x06load_1\x18\x05 \x01(\x02\x12\x0e\n\x06load_5\x18\x06 \x01(\x02\x12\x0f\n\x07load_15\x18\x07 \x01(\x02\x1a\xab\x01\n\x03GPU\x12\r\n\x05uuids\x18\x01 \x03(\t\x12\r\n\x05loads\x18\x02 \x03(\x02\x12\x14\n\x0cmem_percents\x18\x03 \x03(\x02\x12\x12\n\nmem_totals\x18\x04 \x03(\x04\x12\x11\n\tmem_useds\x18\x05 \x03(\x04\x12\x0f\n\x07\x64rivers\x18\x06 \x03(\t\x12\x10\n\x08products\x18\x07 \x03(\t\x12\x0f\n\x07serials\x18\x08 \x03(\t\x12\x15\n\rdisplay_modes\x18\t \x03(\t\x1a\xa7\x01\n\x03RAM\x12\x12\n\nvirt_total\x18\x01 \x01(\x04\x12\x16\n\x0evirt_available\x18\x02 \x01(\x04\x12\x11\n\tvirt_used\x18\x03 \x01(\x04\x12\x11\n\tvirt_free\x18\x04 \x01(\x04\x12\x12\n\nswap_total\x18\x05 \x01(\x04\x12\x11\n\tswap_used\x18\x06 \x01(\x04\x12\x11\n\tswap_free\x18\x07 \x01(\x04\x12\x14\n\x0cswap_percent\x18\x08 \x01(\x02\x1a\xf9\x01\n\x04\x44isk\x12\x15\n\rpartition_ids\x18\x01 \x03(\t\x12\x14\n\x0cmount_points\x18\x02 \x03(\t\x12\x0f\n\x07\x66stypes\x18\x03 \x03(\t\x12\x0e\n\x06totals\x18\x04 \x03(\x04\x12\r\n\x05useds\x18\x05 \x03(\x04\x12\r\n\x05\x66rees\x18\x06 \x03(\x04\x12\x10\n\x08percents\x18\x07 \x03(\x02\x12\x10\n\x08read_cnt\x18\x08 \x01(\x04\x12\x11\n\twrite_cnt\x18\t \x01(\x04\x12\x12\n\nread_bytes\x18\n \x01(\x04\x12\x13\n\x0bwrite_bytes\x18\x0b \x01(\x04\x12\x11\n\tread_time\x18\x0c \x01(\x04\x12\x12\n\nwrite_time\x18\r \x01(\x04\x1a\x44\n\x07\x42\x61ttery\x12\x0f\n\x07percent\x18\x01 \x01(\x02\x12\x11\n\tsecs_left\x18\x02 \x01(\x04\x12\x15\n\rpower_plugged\x18\x03 \x01(\x08\x1a\x82\x01\n\x07Session\x12\x11\n\tboot_time\x18\x01 \x01(\x04\x12\x0e\n\x06uptime\x18\x02 \x01(\x04\x12\r\n\x05users\x18\x03 \x03(\t\x12\x11\n\tterminals\x18\x04 \x03(\t\x12\r\n\x05hosts\x18\x05 \x03(\t\x12\x15\n\rstarted_times\x18\x06 \x03(\x04\x12\x0c\n\x04pids\x18\x07 \x03(\x04\x62\x06proto3'
 )
 
 
@@ -94,8 +94,95 @@ _REPORT_CPU = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=236,
-  serialized_end=370,
+  serialized_start=262,
+  serialized_end=396,
+)
+
+_REPORT_GPU = _descriptor.Descriptor(
+  name='GPU',
+  full_name='Report.GPU',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='uuids', full_name='Report.GPU.uuids', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='loads', full_name='Report.GPU.loads', index=1,
+      number=2, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='mem_percents', full_name='Report.GPU.mem_percents', index=2,
+      number=3, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='mem_totals', full_name='Report.GPU.mem_totals', index=3,
+      number=4, type=4, cpp_type=4, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='mem_useds', full_name='Report.GPU.mem_useds', index=4,
+      number=5, type=4, cpp_type=4, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='drivers', full_name='Report.GPU.drivers', index=5,
+      number=6, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='products', full_name='Report.GPU.products', index=6,
+      number=7, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='serials', full_name='Report.GPU.serials', index=7,
+      number=8, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='display_modes', full_name='Report.GPU.display_modes', index=8,
+      number=9, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=399,
+  serialized_end=570,
 )
 
 _REPORT_RAM = _descriptor.Descriptor(
@@ -174,8 +261,8 @@ _REPORT_RAM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=373,
-  serialized_end=540,
+  serialized_start=573,
+  serialized_end=740,
 )
 
 _REPORT_DISK = _descriptor.Descriptor(
@@ -289,8 +376,8 @@ _REPORT_DISK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=543,
-  serialized_end=792,
+  serialized_start=743,
+  serialized_end=992,
 )
 
 _REPORT_BATTERY = _descriptor.Descriptor(
@@ -334,8 +421,8 @@ _REPORT_BATTERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=794,
-  serialized_end=862,
+  serialized_start=994,
+  serialized_end=1062,
 )
 
 _REPORT_SESSION = _descriptor.Descriptor(
@@ -407,8 +494,8 @@ _REPORT_SESSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=865,
-  serialized_end=995,
+  serialized_start=1065,
+  serialized_end=1195,
 )
 
 _REPORT = _descriptor.Descriptor(
@@ -475,10 +562,17 @@ _REPORT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='gpu', full_name='Report.gpu', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
-  nested_types=[_REPORT_CPU, _REPORT_RAM, _REPORT_DISK, _REPORT_BATTERY, _REPORT_SESSION, ],
+  nested_types=[_REPORT_CPU, _REPORT_GPU, _REPORT_RAM, _REPORT_DISK, _REPORT_BATTERY, _REPORT_SESSION, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -488,10 +582,11 @@ _REPORT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=23,
-  serialized_end=995,
+  serialized_end=1195,
 )
 
 _REPORT_CPU.containing_type = _REPORT
+_REPORT_GPU.containing_type = _REPORT
 _REPORT_RAM.containing_type = _REPORT
 _REPORT_DISK.containing_type = _REPORT
 _REPORT_BATTERY.containing_type = _REPORT
@@ -501,6 +596,7 @@ _REPORT.fields_by_name['ram'].message_type = _REPORT_RAM
 _REPORT.fields_by_name['disk'].message_type = _REPORT_DISK
 _REPORT.fields_by_name['battery'].message_type = _REPORT_BATTERY
 _REPORT.fields_by_name['session'].message_type = _REPORT_SESSION
+_REPORT.fields_by_name['gpu'].message_type = _REPORT_GPU
 DESCRIPTOR.message_types_by_name['Report'] = _REPORT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -510,6 +606,13 @@ Report = _reflection.GeneratedProtocolMessageType('Report', (_message.Message,),
     'DESCRIPTOR' : _REPORT_CPU,
     '__module__' : 'proto.report_pb2'
     # @@protoc_insertion_point(class_scope:Report.CPU)
+    })
+  ,
+
+  'GPU' : _reflection.GeneratedProtocolMessageType('GPU', (_message.Message,), {
+    'DESCRIPTOR' : _REPORT_GPU,
+    '__module__' : 'proto.report_pb2'
+    # @@protoc_insertion_point(class_scope:Report.GPU)
     })
   ,
 
@@ -546,6 +649,7 @@ Report = _reflection.GeneratedProtocolMessageType('Report', (_message.Message,),
   })
 _sym_db.RegisterMessage(Report)
 _sym_db.RegisterMessage(Report.CPU)
+_sym_db.RegisterMessage(Report.GPU)
 _sym_db.RegisterMessage(Report.RAM)
 _sym_db.RegisterMessage(Report.Disk)
 _sym_db.RegisterMessage(Report.Battery)

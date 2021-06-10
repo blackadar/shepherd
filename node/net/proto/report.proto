@@ -15,6 +15,18 @@ message Report {
     float load_5 = 6;
     float load_15 = 7;
   }
+  //GPU
+  message GPU {
+    repeated string uuids = 1;
+    repeated float loads = 2;
+    repeated float mem_percents = 3;
+    repeated uint64 mem_totals = 4;
+    repeated uint64 mem_useds = 5;
+    repeated string drivers = 6;
+    repeated string products = 7;
+    repeated string serials = 8;
+    repeated string display_modes = 9;
+  }
   // RAM
   message RAM {
     uint64 virt_total = 1;
@@ -64,6 +76,6 @@ message Report {
   Disk disk = 6;
   Battery battery = 7;
   Session session = 8;
-
+  GPU gpu = 9;
 
 }
