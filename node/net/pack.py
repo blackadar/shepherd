@@ -1,22 +1,31 @@
 """
-Facilitates packing the Metric data into Protobuf messages.
+Facilitates packing the Metric data into Protobuf messages, sent via 0MQ
 """
 from node.telemetry.subscriber import Subscriber
 import node.net.proto.report_pb2 as proto_report
+import node.constants as const
+import zmq
 
 
 class NetworkSubscriber(Subscriber):
     """
     Accepts subscriber updates and packages into Protobuf messages.
-    The message is then sent to a target via 0MQ.
+    The message is then sent to a target via 0MQ Pub-Sub Pairs.
     """
+
+    def __init__(self):
+        super().__init__()
+        self.port = const.PORT
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PUB)
+        self.socket.bind(f"tcp://*:{self.port}")
 
     def subscriber_name(self) -> str:
         """
         Provides the subscriber name.
         :return: str name
         """
-        return "protobuf"
+        return f"zmq:{str(self.socket)}"
 
     def update(self, update: dict) -> None:
         """
@@ -135,5 +144,4 @@ class NetworkSubscriber(Subscriber):
         report.gpu.serials.extend(serials)
         report.gpu.display_modes.extend(display_modes)
 
-        # TODO: Replace this Debug Print statement with ZeroMQ Network call.
-        print(report.SerializeToString())
+        self.socket.send(f"{str(report.pool_id).zfill(4)}".encode() + report.SerializeToString())

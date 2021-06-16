@@ -56,6 +56,7 @@ class Heart:
             # Stop timing and calculate the remaining time until the next beat (if any)
             beat_end = time.perf_counter()
             elapsed = beat_end - beat_start
+            print(elapsed)
             if elapsed < (1/self.rate):
                 self._impulse_irregular = False
                 time.sleep((1/self.rate) - elapsed)
