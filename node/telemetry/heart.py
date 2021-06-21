@@ -56,7 +56,7 @@ class Heart:
             # Stop timing and calculate the remaining time until the next beat (if any)
             beat_end = time.perf_counter()
             elapsed = beat_end - beat_start
-            print(elapsed)
+            # print(elapsed)
             if elapsed < (1/self.rate):
                 self._impulse_irregular = False
                 time.sleep((1/self.rate) - elapsed)
@@ -110,3 +110,17 @@ class Heart:
                                                    f"implementation of telemetry.Subscriber."
         with self._impulse_lock:
             self._subscribers.append(subscriber)
+
+    def update_assignment(self, node_id: int, pool_id: int):
+        """
+
+        :param node_id:
+        :param pool_id:
+        :return:
+        """
+        self.pool_id = pool_id
+        self.node_id = node_id
+        with self._impulse_lock:
+            self._data['node_id'] = node_id
+            self._data['pool_id'] = pool_id
+

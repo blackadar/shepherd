@@ -2,9 +2,11 @@
 Facilitates packing the Metric data into Protobuf messages, sent via 0MQ
 """
 from node.telemetry.subscriber import Subscriber
-import node.net.proto.report_pb2 as proto_report
+import proto.report_pb2 as proto_report
+from proto.negotiation_pb2 import Negotiation
 import node.constants as const
 import zmq
+import node.memory
 
 
 class NetworkSubscriber(Subscriber):
@@ -13,12 +15,48 @@ class NetworkSubscriber(Subscriber):
     The message is then sent to a target via 0MQ Pub-Sub Pairs.
     """
 
-    def __init__(self):
+    def __init__(self, heart):
         super().__init__()
-        self.port = const.PORT
         self.context = zmq.Context()
+
+        print(f"Broker Handshake -> {const.SERVER_IP}:{const.BROKER_PORT}")
+        # Handle Broker Handshake
+        negotiation = Negotiation()
+        mem = node.memory.read_ids()
+        if mem is False:
+            print("No memory found, requesting new ID.")
+            negotiation.node_proposes_id = False
+        else:
+            node_id, pool_id = mem
+            print(f"Requesting reposession of {pool_id}:{node_id}.")
+            negotiation.node_proposes_id = True
+            negotiation.node_id = node_id
+            negotiation.pool_id = pool_id
+
+        broker = self.context.socket(zmq.REQ)
+        broker.connect(f"tcp://{const.SERVER_IP}:{const.BROKER_PORT}")
+        broker.send(negotiation.SerializeToString())
+        broker_response = broker.recv()
+        broker_negotiation = Negotiation()
+        broker_negotiation.ParseFromString(broker_response)
+
+        if broker_negotiation.server_approve:
+            self.node_id = broker_negotiation.node_id
+            self.pool_id = broker_negotiation.pool_id
+            self.port = broker_negotiation.collector_port
+            print(f"Broker Handshake complete. {self.pool_id}:{self.node_id}")
+            node.memory.write_ids(self.node_id, self.pool_id)
+            heart.update_assignment(self.node_id, self.pool_id)
+        else:
+            raise IOError("Broker handshake unsuccessful. This node may need to be reconfigured.")
+            # TODO: Handle file clear or prompt user to do so.
+
+        broker.close()
+
+        print(f"Collector Publishing -> {const.SERVER_IP}:{self.port}")
         self.socket = self.context.socket(zmq.PUB)
-        self.socket.bind(f"tcp://*:{self.port}")
+        self.socket.setsockopt(zmq.SNDHWM, 2)
+        self.socket.connect(f"tcp://{const.SERVER_IP}:{self.port}")
 
     def subscriber_name(self) -> str:
         """
@@ -144,4 +182,4 @@ class NetworkSubscriber(Subscriber):
         report.gpu.serials.extend(serials)
         report.gpu.display_modes.extend(display_modes)
 
-        self.socket.send(f"{str(report.pool_id).zfill(4)}".encode() + report.SerializeToString())
+        self.socket.send(report.SerializeToString())

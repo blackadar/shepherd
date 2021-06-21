@@ -20,7 +20,7 @@ def main():
 
     heart = Heart(0, 0, 0.5)
     debug = ConsoleSubscriber()
-    net = NetworkSubscriber()
+    net = NetworkSubscriber(heart)
     heart.register_subscriber(debug)
     heart.register_subscriber(net)
 
