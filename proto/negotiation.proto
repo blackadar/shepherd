@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message Negotiation {
+  uint32 pool_id = 1;
+  uint32 node_id = 2;
+  bool node_proposes_id = 3;
+  bool server_approve = 4;
+  uint32 collector_port = 5;
+}

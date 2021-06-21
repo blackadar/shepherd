@@ -1,10 +1,7 @@
-"""
-Module level constants.
-"""
 import configparser
 import pathlib
 
-CONFIG_FILE = pathlib.Path('spd_node.ini')
+CONFIG_FILE = pathlib.Path('spd_server.ini')
 
 config = None
 try:
@@ -21,11 +18,12 @@ def check_config(cat: str, const: str, default, typ):
         return typ(default)
 
 
+
 """
 Constants Below Here
 """
 
-SERVER_IP = check_config("SERVER", "SERVER_IP", "localhost", str)
-MEMORY_FILE = pathlib.Path('node_memory.pkl')
+BROKER_FILE = pathlib.Path('broker_memory.pkl')
+POOL_ID = check_config("POOL", "POOL_ID", 0, int)
 BROKER_PORT = 3030
-
+COLLECTOR_PORT = 3031
