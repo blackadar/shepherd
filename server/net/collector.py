@@ -7,7 +7,9 @@ import zmq
 import threading
 import proto.report_pb2 as proto_report
 import server.constants as const
-from google.protobuf.json_format import MessageToDict
+from server.util import MessageToDict
+
+from server.processor import Processor
 
 
 class Collector:
@@ -18,6 +20,7 @@ class Collector:
     def __init__(self):
         self.run = True
         self.port = const.COLLECTOR_PORT
+        self._processors = []
         context = zmq.Context()
         self.socket = context.socket(zmq.SUB)
         self.socket.bind(f"tcp://*:{self.port}")
@@ -30,7 +33,16 @@ class Collector:
             message = self.socket.recv()
             report = proto_report.Report()
             report.ParseFromString(message)
-            print(f"{report.pool_id}:{report.node_id}  {MessageToDict(report)}")
 
-            # TODO: Add data to Database
+            for p in self._processors:
+                p: Processor
+                p.update(report.node_id, MessageToDict(report))
+
+    def add_processor(self, processor: Processor):
+        """
+        Adds an implementation of the Processor interface to the list of Processors.
+        :param processor: Processor implementation
+        :return: None
+        """
+        self._processors.append(processor)
 
