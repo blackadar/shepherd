@@ -18,7 +18,7 @@ def main():
     :return:
     """
 
-    heart = Heart(0, 0, 0.5)
+    heart = Heart(0, 0, 1)
     debug = ConsoleSubscriber()
     net = NetworkSubscriber(heart)
     heart.register_subscriber(debug)
