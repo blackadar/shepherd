@@ -3,10 +3,13 @@ Manages the network negotiation portion of a client connection.
 Node connects here first to get the node and Pool ID, then is redirected to the PUB/SUB ZMQ interface.
 """
 import zmq
+import sqlalchemy as sa
+from sqlalchemy.orm import Session
 import server.constants as const
 import threading
 import pickle
 from proto.negotiation_pb2 import Negotiation
+from server.db.mappings import Pool, Node
 
 
 class Broker:
@@ -14,12 +17,29 @@ class Broker:
 
     """
 
-    def __init__(self):
+    def __init__(self, host, port, user, password, dbname, verbose=False):
         self.run = True
         self.pool_id = const.POOL_ID
+
         context = zmq.Context()
         self.socket = context.socket(zmq.REP)
         self.socket.bind(f"tcp://*:{const.BROKER_PORT}")
+
+        self.host = host
+        self.port = port
+        self.user = user
+        self.password = password
+        self.dbname = dbname
+        self.engine = sa.create_engine(f"mysql://{self.user}:{self.password}@{self.host}:{self.port}/"
+                                       f"{self.dbname}", echo=verbose)
+        self.session = Session(self.engine)
+
+        self.pool = self.session.get(Pool, self.pool_id)
+        if self.pool is None:
+            self.pool = Pool(id=self.pool_id)
+            self.session.add(self.pool)
+            self.session.commit()
+
         self.work_thread = threading.Thread(target=self._work)
         self.work_thread.start()
 
@@ -30,7 +50,8 @@ class Broker:
             negotiation.ParseFromString(message)
             response = Negotiation()
             if negotiation.node_proposes_id:
-                valid = Broker.check_id_exists(negotiation.node_id) and negotiation.pool_id == self.pool_id
+                valid = Broker.check_id_exists(negotiation.node_id) and negotiation.pool_id == self.pool_id and\
+                    self.session.get(Node, {'id': negotiation.node_id, 'pool_id': self.pool_id}) is not None
                 print(f"Node connection proposes ID {negotiation.node_id}. Valid: {valid}.")
                 if valid:
                     response.server_approve = True
@@ -41,6 +62,8 @@ class Broker:
                     response.server_approve = False
             else:
                 node_id = Broker.generate_new_id()
+                self.session.add(Node(id=node_id, pool_id=self.pool_id))
+                self.session.commit()
                 response.server_approve = True
                 response.pool_id = self.pool_id
                 response.node_id = node_id
