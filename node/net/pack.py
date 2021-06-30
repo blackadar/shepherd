@@ -120,11 +120,11 @@ class NetworkSubscriber(Subscriber):
         report.disk.percents.extend(percents)
 
         report.disk.read_cnt = update['disk']['io']['read_count']
-        report.disk.read_cnt = update['disk']['io']['write_count']
-        report.disk.read_cnt = update['disk']['io']['read_bytes']
-        report.disk.read_cnt = update['disk']['io']['write_bytes']
-        report.disk.read_cnt = update['disk']['io']['read_time']
-        report.disk.read_cnt = update['disk']['io']['write_time']
+        report.disk.write_cnt = update['disk']['io']['write_count']
+        report.disk.read_bytes = update['disk']['io']['read_bytes']
+        report.disk.write_bytes = update['disk']['io']['write_bytes']
+        report.disk.read_time = update['disk']['io']['read_time']
+        report.disk.write_time = update['disk']['io']['write_time']
 
         if update['battery']['power_plugged'] is not None:
             report.battery.percent = update['battery']['percent']

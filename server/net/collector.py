@@ -3,6 +3,8 @@ Manages the post-negotiation portion of node communications.
 After assignment of a Node and Pool ID, ALL nodes report to this class, publishing updates.
 ZMQ handles the connects/disconnects/fair queueing.
 """
+import timeit
+
 import zmq
 import threading
 import proto.report_pb2 as proto_report
@@ -36,7 +38,10 @@ class Collector:
 
             for p in self._processors:
                 p: Processor
-                p.update(report.node_id, MessageToDict(report))
+                a = timeit.default_timer()
+                p.update(report.pool_id, report.node_id, MessageToDict(report))
+                b = timeit.default_timer()
+                print(f"{p.processor_name()}: {b - a}s")
 
     def add_processor(self, processor: Processor):
         """

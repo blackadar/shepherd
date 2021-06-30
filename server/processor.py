@@ -21,9 +21,10 @@ class Processor(abc.ABC):
         pass
 
     @abc.abstractmethod(abc.abstractclassmethod)
-    def update(self, node_id: int, update: dict) -> None:
+    def update(self, pool_id: int, node_id: int, update: dict) -> None:
         """
         Receive an update from the data source.
+        :param pool_id:
         :param node_id:
         :param update:
         :return:
@@ -39,5 +40,5 @@ class ConsoleProcessor(Processor):
     def processor_name(self) -> str:
         return "console"
 
-    def update(self, node_id, update: dict) -> None:
-        print(f"{node_id}: {update}", flush=True)
+    def update(self, pool_id, node_id, update: dict) -> None:
+        print(f"{pool_id}/{node_id}: {update}", flush=True)

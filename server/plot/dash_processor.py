@@ -65,7 +65,7 @@ class DashProcessor(Processor):
     def processor_name(self) -> str:
         return "dash"
 
-    def update(self, node_id: int, update: dict) -> None:
+    def update(self, pool_id: int, node_id: int, update: dict) -> None:
         with self.QLock:
             self.X.append(self._x)
             self.Y.append(update['cpu']['percent'])
