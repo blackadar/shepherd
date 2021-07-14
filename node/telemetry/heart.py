@@ -48,7 +48,7 @@ class Heart:
             # Get all the updated info
             with self._impulse_lock:
                 for metric in self._metrics:
-                    self._data[metric.metric_name()] |= metric.measure()
+                    self._data[metric.metric_name()].update(metric.measure())
                 self._data['time'] = int(time.time())
 
                 self._pulse()
