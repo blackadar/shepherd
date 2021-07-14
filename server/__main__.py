@@ -12,8 +12,8 @@ def main():
     broker = Broker('localhost', 3306, 'user', 'password', 'schema')
     collector = Collector()
     collector.add_processor(ConsoleProcessor())
-    # collector.add_processor(DashProcessor())
-    collector.add_processor(MySQLProcessor('shepherd-db-do-user-1967773-0.b.db.ondigitalocean.com', 25060, 'doadmin', 'vezdlbtvcbnzqqvs', 'defaultdb'))
+    collector.add_processor(DashProcessor())
+    collector.add_processor(MySQLProcessor('localhost', 3306, 'user', 'password', 'schema'))
 
 
 if __name__ == '__main__':
