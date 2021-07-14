@@ -9,7 +9,7 @@ from server.db.mysql_processor import MySQLProcessor
 
 
 def main():
-    broker = Broker('shepherd-db-do-user-1967773-0.b.db.ondigitalocean.com', 25060, 'doadmin', 'vezdlbtvcbnzqqvs', 'defaultdb')
+    broker = Broker('localhost', 3306, 'user', 'password', 'schema')
     collector = Collector()
     collector.add_processor(ConsoleProcessor())
     # collector.add_processor(DashProcessor())
