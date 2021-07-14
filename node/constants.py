@@ -25,7 +25,7 @@ def check_config(cat: str, const: str, default, typ):
 Constants Below Here
 """
 
-SERVER_IP = check_config("NETWORK", "SERVER_IP", "localhost", str)
+SERVER_IP = check_config("SERVER", "SERVER_IP", "localhost", str)
 MEMORY_FILE = pathlib.Path('node_memory.pkl')
 BROKER_PORT = 3030
 
