@@ -15,7 +15,7 @@ except Exception as e:
 
 
 def check_config(cat: str, const: str, default, typ):
-    if cat in config.keys() and const in config[cat].keys():
+    if config.has_section(cat) and config.has_option(cat, const):
         return typ(config[cat][const])
     else:
         return typ(default)
@@ -25,7 +25,7 @@ def check_config(cat: str, const: str, default, typ):
 Constants Below Here
 """
 
-SERVER_IP = check_config("SERVER", "SERVER_IP", "localhost", str)
+SERVER_IP = check_config("NETWORK", "SERVER_IP", "localhost", str)
 MEMORY_FILE = pathlib.Path('node_memory.pkl')
 BROKER_PORT = 3030
 

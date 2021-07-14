@@ -12,7 +12,7 @@ def main():
     broker = Broker('localhost', 3306, 'user', 'password', 'schema')
     collector = Collector()
     collector.add_processor(ConsoleProcessor())
-    collector.add_processor(DashProcessor())
+    # collector.add_processor(DashProcessor())
     collector.add_processor(MySQLProcessor('localhost', 3306, 'user', 'password', 'schema'))
 
 

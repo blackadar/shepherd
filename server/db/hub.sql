@@ -22,7 +22,7 @@ comment 'Stores Node-Level Attributes and Association to Pool';
 
 create table `Update`
 (
-	id int auto_increment not null,
+	id bigint unsigned auto_increment not null,
 	pool_id int not null,
 	node_id int not null,
 	timestamp datetime not null,
@@ -62,8 +62,8 @@ comment 'Node Updates at High Frequency';
 
 create table GPU_Update
 (
-	id int auto_increment not null,
-	update_id int not null,
+	id bigint unsigned auto_increment not null,
+	update_id bigint unsigned not null,
 	uuid varchar(50) null,
 	`load` float null,
 	memory_percentage float null,
@@ -83,8 +83,8 @@ comment 'GPU Component of an Update';
 
 create table Disk_Update
 (
-	id int auto_increment not null,
-	update_id int not null,
+	id bigint unsigned auto_increment not null,
+	update_id bigint unsigned not null,
 	partition_id varchar(50) null,
 	mount_point varchar(50) null,
 	fstype varchar(20) null,
@@ -102,8 +102,8 @@ comment 'Disk Component of an Update';
 
 create table Session_Update
 (
-	id int auto_increment not null,
-	update_id int not null,
+	id bigint unsigned auto_increment not null,
+	update_id bigint unsigned not null,
 	user varchar(50) null,
 	terminal varchar(50) null,
 	host varchar(100) null,
