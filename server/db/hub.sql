@@ -1,3 +1,5 @@
+create schema shepherd;
+use shepherd;
 create table Pool
 (
 	id int not null,
@@ -115,3 +117,39 @@ create table Session_Update
 )
 comment 'Session Component of an Update';
 
+create table Historical_Data
+(
+    id int auto_increment not null,
+    node_id int not null,
+    pool_id int not null,
+    avg_cpu_curr_freq float null,
+    avg_cpu_percent_usage float null,
+    avg_cpu_load_1 float null,
+    avg_cpu_load_5 float null,
+    avg_cpu_load_15 float null,
+    avg_ram_used_virt bigint null,
+    avg_ram_used_swap bigint null,
+    total_disk_avail bigint null,
+    total_disk_used bigint null,
+    avg_battery_avail float null,
+    avg_gpu_load float null,
+    avg_gpu_memory_used bigint null,
+    constraint Historical_Data_pk primary key (id),
+    constraint Historical_Data_Node__fk
+        foreign key (pool_id, node_id) references `Node` (pool_id, id)
+            on update cascade on delete cascade
+);
+
+create table Anomaly_Record(
+    id int auto_increment not null,
+    node_id int not null,
+    pool_id int not null,
+    type ENUM('cpu', 'ram', 'disk', 'gpu', 'session', 'battery', 'other') not null,
+    time datetime not null,
+    message varchar(250) null,
+    severity ENUM('low', 'medium', 'high', 'none') not null,
+    constraint Anomaly_record_pk primary key (id),
+    constraint Anomaly_Record_Node__fk
+        foreign key (pool_id, node_id) references `Node` (pool_id, id)
+            on update cascade on delete cascade
+);
