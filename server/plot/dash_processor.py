@@ -28,7 +28,6 @@ class DashProcessor(Processor):
         self.QLock = Lock()
         self.dash()
 
-
     def dash(self):
         app = dash.Dash(__name__)
         app.layout = html.Div(
