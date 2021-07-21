@@ -94,92 +94,95 @@ class NetworkSubscriber(Subscriber):
         report.ram.swap_used = update['ram']['swap_used']
         report.ram.swap_free = update['ram']['swap_free']
 
-        devices = []
-        mount_points = []
-        fstypes = []
-        totals = []
-        useds = []
-        frees = []
-        percents = []
+        if 'disk' in update.keys():
+            devices = []
+            mount_points = []
+            fstypes = []
+            totals = []
+            useds = []
+            frees = []
+            percents = []
 
-        for part in update['disk']['partitions'].values():
-            devices.append(part['device'])
-            mount_points.append(part['mount_point'])
-            fstypes.append(part['fstype'])
-            totals.append(part['total'])
-            useds.append(part['used'])
-            frees.append(part['free'])
-            percents.append(part['percent'])
+            for part in update['disk']['partitions'].values():
+                devices.append(part['device'])
+                mount_points.append(part['mount_point'])
+                fstypes.append(part['fstype'])
+                totals.append(part['total'])
+                useds.append(part['used'])
+                frees.append(part['free'])
+                percents.append(part['percent'])
 
-        report.disk.partition_ids.extend(devices)
-        report.disk.mount_points.extend(mount_points)
-        report.disk.fstypes.extend(fstypes)
-        report.disk.totals.extend(totals)
-        report.disk.useds.extend(useds)
-        report.disk.frees.extend(frees)
-        report.disk.percents.extend(percents)
+            report.disk.partition_ids.extend(devices)
+            report.disk.mount_points.extend(mount_points)
+            report.disk.fstypes.extend(fstypes)
+            report.disk.totals.extend(totals)
+            report.disk.useds.extend(useds)
+            report.disk.frees.extend(frees)
+            report.disk.percents.extend(percents)
 
-        report.disk.read_cnt = update['disk']['io']['read_count']
-        report.disk.write_cnt = update['disk']['io']['write_count']
-        report.disk.read_bytes = update['disk']['io']['read_bytes']
-        report.disk.write_bytes = update['disk']['io']['write_bytes']
-        report.disk.read_time = update['disk']['io']['read_time']
-        report.disk.write_time = update['disk']['io']['write_time']
+            report.disk.read_cnt = update['disk']['io']['read_count']
+            report.disk.write_cnt = update['disk']['io']['write_count']
+            report.disk.read_bytes = update['disk']['io']['read_bytes']
+            report.disk.write_bytes = update['disk']['io']['write_bytes']
+            report.disk.read_time = update['disk']['io']['read_time']
+            report.disk.write_time = update['disk']['io']['write_time']
 
-        if update['battery']['power_plugged'] is not None:
-            report.battery.percent = update['battery']['percent']
-            report.battery.secs_left = update['battery']['secs_left']
-            report.battery.power_plugged = update['battery']['power_plugged']
+        if 'battery' in update.keys():
+            if update['battery']['power_plugged'] is not None:
+                report.battery.percent = update['battery']['percent']
+                report.battery.secs_left = update['battery']['secs_left']
+                report.battery.power_plugged = update['battery']['power_plugged']
 
-        report.session.boot_time = update['session']['boot_time']
-        report.session.uptime = update['session']['uptime']
+        if 'session' in update.keys():
+            report.session.boot_time = update['session']['boot_time']
+            report.session.uptime = update['session']['uptime']
+            users = []
+            terminals = []
+            hosts = []
+            started_times = []
+            pids = []
+            for user, attribs in update['session']['users'].items():
+                users.append(user)
+                terminals.append(attribs['terminal'] if attribs['terminal'] is not None else '')
+                hosts.append(attribs['host'] if attribs['host'] is not None else '')
+                started_times.append(attribs['started'])
+                pids.append(attribs['pid'] if attribs['pid'] is not None else 0)
 
-        users = []
-        terminals = []
-        hosts = []
-        started_times = []
-        pids = []
-        for user, attribs in update['session']['users'].items():
-            users.append(user)
-            terminals.append(attribs['terminal'] if attribs['terminal'] is not None else '')
-            hosts.append(attribs['host'] if attribs['host'] is not None else '')
-            started_times.append(attribs['started'])
-            pids.append(attribs['pid'] if attribs['pid'] is not None else 0)
+            report.session.users.extend(users)
+            report.session.terminals.extend(terminals)
+            report.session.hosts.extend(hosts)
+            report.session.started_times.extend(started_times)
+            report.session.pids.extend(pids)
 
-        report.session.users.extend(users)
-        report.session.terminals.extend(terminals)
-        report.session.hosts.extend(hosts)
-        report.session.started_times.extend(started_times)
-        report.session.pids.extend(pids)
+        if 'gpu' in update.keys():
+            uuids = []
+            loads = []
+            mem_percents = []
+            mem_totals = []
+            mem_useds = []
+            drivers = []
+            products = []
+            serials = []
+            display_modes = []
+            for gpu in update['gpu'].values():
+                uuids.append(gpu['uuid'])
+                loads.append(gpu['load'])
+                mem_percents.append(gpu['mem_percent'])
+                mem_totals.append(gpu['mem_total'])
+                mem_useds.append(gpu['mem_used'])
+                drivers.append(gpu['driver'])
+                products.append(gpu['product'])
+                serials.append(gpu['serial'])
+                display_modes.append(gpu['display_mode'])
 
-        uuids = []
-        loads = []
-        mem_percents = []
-        mem_totals = []
-        mem_useds = []
-        drivers = []
-        products = []
-        serials = []
-        display_modes = []
-        for gpu in update['gpu'].values():
-            uuids.append(gpu['uuid'])
-            loads.append(gpu['load'])
-            mem_percents.append(gpu['mem_percent'])
-            mem_totals.append(gpu['mem_total'])
-            mem_useds.append(gpu['mem_used'])
-            drivers.append(gpu['driver'])
-            products.append(gpu['product'])
-            serials.append(gpu['serial'])
-            display_modes.append(gpu['display_mode'])
-
-        report.gpu.uuids.extend(uuids)
-        report.gpu.loads.extend(loads)
-        report.gpu.mem_percents.extend(mem_percents)
-        report.gpu.mem_totals.extend(mem_totals)
-        report.gpu.mem_useds.extend(mem_useds)
-        report.gpu.drivers.extend(drivers)
-        report.gpu.products.extend(products)
-        report.gpu.serials.extend(serials)
-        report.gpu.display_modes.extend(display_modes)
+            report.gpu.uuids.extend(uuids)
+            report.gpu.loads.extend(loads)
+            report.gpu.mem_percents.extend(mem_percents)
+            report.gpu.mem_totals.extend(mem_totals)
+            report.gpu.mem_useds.extend(mem_useds)
+            report.gpu.drivers.extend(drivers)
+            report.gpu.products.extend(products)
+            report.gpu.serials.extend(serials)
+            report.gpu.display_modes.extend(display_modes)
 
         self.socket.send(report.SerializeToString())
