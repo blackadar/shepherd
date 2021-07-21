@@ -39,6 +39,7 @@ class AnomalyRecord(Base):
     pool_id = Column(Integer, nullable=False)
     type = Column(Enum('cpu', 'ram', 'disk', 'gpu', 'session', 'battery', 'other'), nullable=False)
     time = Column(DateTime, nullable=False)
+    resolved = Column(TINYINT(1), nullable=False)
     message = Column(String(250))
     severity = Column(Enum('low', 'medium', 'high', 'none'), nullable=False)
 

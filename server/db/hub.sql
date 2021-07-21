@@ -146,6 +146,7 @@ create table Anomaly_Record(
     pool_id int not null,
     type ENUM('cpu', 'ram', 'disk', 'gpu', 'session', 'battery', 'other') not null,
     time datetime not null,
+    resolved boolean not null,
     message varchar(250) null,
     severity ENUM('low', 'medium', 'high', 'none') not null,
     constraint Anomaly_record_pk primary key (id),
