@@ -23,8 +23,8 @@ from server.db.mappings import HistoricalData, Node, Update, DiskUpdate, Session
 
 def clean(host: str, port: int, user: str, password: str, dbname: str, pool: int, verbose=False) -> bool:
     """
-    does stuff
-    :return: probably something
+
+    :return:
     """
     # Create DB Session
     print("Connecting to Database...")
