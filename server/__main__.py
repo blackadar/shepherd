@@ -7,13 +7,15 @@ from server.processor import ConsoleProcessor
 from server.plot.dash_processor import DashProcessor
 from server.db.mysql_processor import MySQLProcessor
 
+import server.constants as const
+
 
 def main():
-    broker = Broker('localhost', 3306, 'user', 'password', 'schema')
+    broker = Broker(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA)
     collector = Collector()
     collector.add_processor(ConsoleProcessor())
     # collector.add_processor(DashProcessor())
-    collector.add_processor(MySQLProcessor('localhost', 3306, 'user', 'password', 'schema'))
+    collector.add_processor(MySQLProcessor(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA))
 
 
 if __name__ == '__main__':
