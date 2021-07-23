@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from server.db.mappings import Node, Pool, Update, DiskUpdate, GPUUpdate, AnomalyRecord
 import server.constants as const
+import server.mail.api as mail
 
 
 def setup(host: str, port: int, user: str, password: str, dbname: str, verbose=False):
@@ -176,12 +177,35 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
             if len(matching) == 0:
                 new_anomalies.append(anomaly)
                 new += 1
+                if const.EMAIL_NEW:
+                    # mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly",
+                    #                       f"NEW ANOMALY:\n"
+                    #                       f"Time: {str(anomaly.time)}\n"
+                    #                       f"Type: {anomaly.type}\n"
+                    #                       f"Message: {anomaly.message}\n"
+                    #                       f"Severity: {anomaly.severity}\n"
+                    #                       f"\n"
+                    #                       f"Delivered automatically by the Shepherd service."
+                    #                       f"To stop receiving these e-mails, modify the config file.")
+                    mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly",
+                                          mail.make_new_alert_message(anomaly.time, anomaly.type, anomaly.message, anomaly.severity, anomaly.node_id))
 
         for index, row in node_outstanding_anomalies.loc[node_outstanding_anomalies['found_ongoing'] == 0].iterrows():
-            resolved_anomalies.append(session.query(AnomalyRecord).get(row['id']))
+            anomaly = session.query(AnomalyRecord).get(row['id'])
+            resolved_anomalies.append(anomaly)
             resolved += 1
+            if const.EMAIL_RESOLVED:
+                mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly Resolved",
+                                      f"RESOLVED ANOMALY:\n"
+                                      f"Time: {str(anomaly.time)}\n"
+                                      f"Type: {anomaly.type}\n"
+                                      f"Message: {anomaly.message}\n"
+                                      f"Severity: {anomaly.severity}\n"
+                                      f"\n"
+                                      f"Delivered automatically by the Shepherd service. "
+                                      f"To stop receiving these e-mails, modify the config file.")
 
-        print(f"Detection for {node.pool_id}:{node.id} found {new} new and {resolved} resolved anomalies.")
+        print(f"Detection for {node.pool_id}:{node.id} found {new} new and {resolved} resolved anomalies. {len(node_outstanding_anomalies) - resolved} outstanding.")
 
     """
     Checks list of unresolved anomalies which are now considered resolved and marks them as such
@@ -197,11 +221,12 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
 
 
 def main():
-    session = setup('localhost', 3306, 'user', 'password', 'table')
+    session = setup(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA)
+    last_run = datetime.datetime.now()
     while True:
-        last_run = datetime.datetime.now()
         detect(session, last_run, const.POOL_ID)
-        time.sleep(10)
+        last_run = datetime.datetime.now()
+        time.sleep(5)
 
 
 if __name__ == '__main__':
