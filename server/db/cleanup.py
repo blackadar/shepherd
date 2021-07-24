@@ -23,7 +23,8 @@ from server.db.mappings import HistoricalData, Node, Update, DiskUpdate, Session
 
 def clean(host: str, port: int, user: str, password: str, dbname: str, pool: int, verbose=False) -> bool:
     """
-
+    Reads through all current database entries, and condenses all entries older than 48 hours old.
+    Condensed data will be entered into the historical database.
     :return:
     """
     # Create DB Session

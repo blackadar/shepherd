@@ -2,7 +2,7 @@
 Processes Collector Data with Plotly DASH dynamic plot.
 """
 import time
-
+import server.constants as consts
 import dash
 import threading
 import sqlalchemy as sa
@@ -81,7 +81,7 @@ def update_graph_scatter(n):
 
 def db_work():
     global X, Y
-    session = setup('64.227.2.44', 3306, 'shepherd', 'Tcg3Dvq2', 'shepherd')
+    session = setup(consts.DB_URL, consts.DB_PORT, consts.DB_USER, consts.DB_PASSWORD, consts.DB_SCHEMA)
     while True:
         with QLock:
             query = session.query(Update).filter(Update.node_id == node).order_by(desc(Update.timestamp)).limit(10)

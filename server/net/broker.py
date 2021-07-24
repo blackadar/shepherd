@@ -123,6 +123,7 @@ class Broker:
     @staticmethod
     def from_broker_file():
         """
+        Reads data from the broker file
         :return:
         """
         with open(const.BROKER_FILE, 'rb') as f:
@@ -131,6 +132,7 @@ class Broker:
     @staticmethod
     def to_broker_file(data):
         """
+        Writes data to the broker file
         :param data:
         """
         with open(const.BROKER_FILE, 'wb') as f:
