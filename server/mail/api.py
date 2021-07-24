@@ -34,7 +34,26 @@ def make_new_alert_message(timestamp, typ, message, severity, node_id) -> str:
     :return:
     """
     return open("server/mail/alert.html").read().replace('$$$timestamp$$$', f'{str(timestamp)}')\
-        .replace('$$$type$$$', f'{str(typ)}')\
+        .replace('$$$type$$$', f'{str(typ).upper()}')\
         .replace('$$$message$$$', f'{str(message)}')\
         .replace('$$$severity$$$', f'{str(severity)}') \
-        .replace('$$$id$$$', f'{str(node_id)}')
+        .replace('$$$id$$$', f'{str(node_id)}')\
+        .replace('$$$detected$$$', 'detected')
+
+
+def make_new_resolved_message(timestamp, typ, message, severity, node_id) -> str:
+    """
+
+    :param timestamp:
+    :param typ:
+    :param message:
+    :param severity:
+    :param node_id:
+    :return:
+    """
+    return open("server/mail/alert.html").read().replace('$$$timestamp$$$', f'{str(timestamp)}') \
+        .replace('$$$type$$$', f'{str(typ).upper()}') \
+        .replace('$$$message$$$', f'{str(message)}') \
+        .replace('$$$severity$$$', f'{str(severity)}') \
+        .replace('$$$id$$$', f'{str(node_id)}')\
+        .replace('$$$detected$$$', 'resolved')
