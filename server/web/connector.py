@@ -55,5 +55,6 @@ class ShepherdConnection:
         :return: list of ints
         """
         with self.lock:
+            self.session.commit()
             nodes = self.session.query(Update.node_id).distinct()
             return [node[0] for node in nodes]
