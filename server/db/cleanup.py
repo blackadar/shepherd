@@ -19,6 +19,7 @@ import numpy as np
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from server.db.mappings import HistoricalData, Node, Update, DiskUpdate, SessionUpdate, GPUUpdate, Pool
+import server.constants as const
 
 
 def clean(host: str, port: int, user: str, password: str, dbname: str, pool: int, verbose=False) -> bool:
@@ -52,36 +53,44 @@ def clean(host: str, port: int, user: str, password: str, dbname: str, pool: int
         # GPU Updates
         gpu_query = session.query(GPUUpdate).filter(and_(GPUUpdate.update.has(node_id=node.id), GPUUpdate.update.has(Update.timestamp <= hr_cutoff)))
         gpu_updates = pd.read_sql(gpu_query.statement, gpu_query.session.bind)
-        historical = HistoricalData()
-        historical.node_id = node.id
-        historical.pool_id = node.pool_id
-        historical.avg_cpu_curr_freq = _clean(updates['cpu_current_frequency'].mean())
-        historical.avg_cpu_percent_usage = _clean(updates['cpu_percent_usage'].mean())
-        historical.avg_cpu_load_1 = _clean(updates['cpu_load_1'].mean())
-        historical.avg_cpu_load_5 = _clean(updates['cpu_load_5'].mean())
-        historical.avg_cpu_load_15 = _clean(updates['cpu_load_15'].mean())
-        historical.avg_ram_used_virt = _clean(updates['ram_used_virtual'].mean())
-        historical.avg_ram_used_swap = _clean(updates['ram_used_swap'].mean())
-        historical.avg_battery_avail = _clean(updates['battery_available_percent'].mean())
 
-        disks = disk_updates['partition_id'].unique()
-        avail_avgs = []
-        used_avgs = []
-        for disk in disks:
-            avail_avgs.append(disk_updates.loc[disk_updates['partition_id'] == disk]['free_storage'].mean())
-            used_avgs.append(disk_updates.loc[disk_updates['partition_id'] == disk]['used_storage'].mean())
-        historical.total_disk_avail = _clean(sum(avail_avgs))
-        historical.total_disk_used = _clean(sum(used_avgs))
+        if len(updates) > 0:
+            historical = HistoricalData()
+            historical.node_id = node.id
+            historical.pool_id = node.pool_id
+            historical.time = hr_cutoff
+            historical.avg_cpu_curr_freq = _clean(updates['cpu_current_frequency'].mean())
+            historical.avg_cpu_percent_usage = _clean(updates['cpu_percent_usage'].mean())
+            historical.avg_cpu_load_1 = _clean(updates['cpu_load_1'].mean())
+            historical.avg_cpu_load_5 = _clean(updates['cpu_load_5'].mean())
+            historical.avg_cpu_load_15 = _clean(updates['cpu_load_15'].mean())
+            historical.avg_ram_used_virt = _clean(updates['ram_used_virtual'].mean())
+            historical.avg_ram_used_swap = _clean(updates['ram_used_swap'].mean())
+            historical.avg_battery_avail = _clean(updates['battery_available_percent'].mean())
 
-        gpus = gpu_updates['uuid'].unique()
-        loads = []
-        memory_useds = []
-        for gpu in gpus:
-            loads.append(gpu_updates.loc[gpu_updates['uuid'] == gpu]['load'].mean())
-            memory_useds.append(gpu_updates.loc[gpu_updates['uuid'] == gpu]['memory_used'].mean())
-        historical.avg_gpu_load = _clean(np.average(loads))
-        historical.avg_gpu_memory_used = _clean(np.average(memory_useds))
-        session.add(historical)
+            if len(disk_updates) > 0:
+                disks = disk_updates['partition_id'].unique()
+                avail_avgs = []
+                used_avgs = []
+                for disk in disks:
+                    avail_avgs.append(disk_updates.loc[disk_updates['partition_id'] == disk]['free_storage'].mean())
+                    used_avgs.append(disk_updates.loc[disk_updates['partition_id'] == disk]['used_storage'].mean())
+                historical.total_disk_avail = _clean(sum(avail_avgs))
+                historical.total_disk_used = _clean(sum(used_avgs))
+            if len(gpu_updates) > 0:
+                gpus = gpu_updates['uuid'].unique()
+                loads = []
+                memory_useds = []
+                for gpu in gpus:
+                    loads.append(gpu_updates.loc[gpu_updates['uuid'] == gpu]['load'].mean())
+                    memory_useds.append(gpu_updates.loc[gpu_updates['uuid'] == gpu]['memory_used'].mean())
+                historical.avg_gpu_load = _clean(np.average(loads))
+                historical.avg_gpu_memory_used = _clean(np.average(memory_useds))
+
+            session.add(historical)
+            print(f"Added record for {node.pool_id}:{node.id}.")
+        else:
+            print(f"No updates in time range for {node.pool_id}:{node.id}.")
 
     print("Committing changes to Historical DB.")
     session.commit()
@@ -95,4 +104,4 @@ def clean(host: str, port: int, user: str, password: str, dbname: str, pool: int
 
 
 if __name__ == '__main__':
-    clean('localhost', 3306, 'user', 'password', 'shepherd', 1, False)
+    clean(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA, const.POOL_ID, False)

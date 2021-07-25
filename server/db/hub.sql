@@ -122,6 +122,7 @@ create table Historical_Data
     id int auto_increment not null,
     node_id int not null,
     pool_id int not null,
+    time datetime not null,
     avg_cpu_curr_freq float null,
     avg_cpu_percent_usage float null,
     avg_cpu_load_1 float null,
