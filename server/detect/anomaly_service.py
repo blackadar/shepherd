@@ -100,7 +100,8 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
                                                     resolved=False, message=f'15 minute CPU load over threshold.',
                                                     severity='medium'))
                 in_interval.append('cpu15')
-            if (row['ram_used_virtual'] / row['ram_total_virtual']) * 100 >= const.A_RAM_VIRT_PERCENT and 'ram_virt' not in in_interval:
+            if (row['ram_used_virtual'] / row[
+                'ram_total_virtual']) * 100 >= const.A_RAM_VIRT_PERCENT and 'ram_virt' not in in_interval:
                 node_anomalies.append(AnomalyRecord(node_id=node.id, pool_id=pool.id, type='ram', time=row['timestamp'],
                                                     resolved=False, message=f'Virtual RAM usage over threshold.',
                                                     severity='medium'))
@@ -112,29 +113,31 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
                 in_interval.append('ram_swap')
             if 0 < row['battery_available_percent'] <= const.A_BATTERY_AVAIL and 'battery_avail' not in in_interval:
                 node_anomalies.append(
-                    AnomalyRecord(node_id=node.id, pool_id=pool.id, type='battery', time=row['timestamp'],
-                                  resolved=False, message=f'Available Battery below threshold.',
-                                  severity='high'))
+                        AnomalyRecord(node_id=node.id, pool_id=pool.id, type='battery', time=row['timestamp'],
+                                      resolved=False, message=f'Available Battery below threshold.',
+                                      severity='high'))
                 in_interval.append('battery_avail')
             if row['session_uptime'] >= const.A_SESSION_UPTIME_INTERVAL and 'uptime' not in in_interval:
                 node_anomalies.append(
-                    AnomalyRecord(node_id=node.id, pool_id=pool.id, type='session', time=row['timestamp'],
-                                  resolved=False,
-                                  message=f'Node uptime exceeds threshold. Consider reboot.',
-                                  severity='low'))
+                        AnomalyRecord(node_id=node.id, pool_id=pool.id, type='session', time=row['timestamp'],
+                                      resolved=False,
+                                      message=f'Node uptime exceeds threshold. Consider reboot.',
+                                      severity='low'))
                 in_interval.append('uptime')
 
         for index, row in disk_updates.iterrows():
-            if row['percentage_used'] >= const.A_DISK_PERCENT_USED and f'disk_percent_{row["partition_id"]}' not in in_interval:
+            if row[
+                'percentage_used'] >= const.A_DISK_PERCENT_USED and f'disk_percent_{row["partition_id"]}' not in in_interval:
                 node_anomalies.append(
-                    AnomalyRecord(node_id=node.id, pool_id=pool.id, type='disk', time=row['timestamp'],
-                                  resolved=False,
-                                  message=f'Disk {row["partition_id"]} usage exceeds threshold.',
-                                  severity='high')
+                        AnomalyRecord(node_id=node.id, pool_id=pool.id, type='disk', time=row['timestamp'],
+                                      resolved=False,
+                                      message=f'Disk {row["partition_id"]} usage exceeds threshold.',
+                                      severity='high')
                 )
                 in_interval.append(f'disk_percent_{row["partition_id"]}')
         for index, row in gpu_updates.iterrows():
-            if row['memory_percentage'] * 100 >= const.A_GPU_MEMORY_PERCENT and f'gpu_mem_{row["uuid"]}' not in in_interval:
+            if row[
+                'memory_percentage'] * 100 >= const.A_GPU_MEMORY_PERCENT and f'gpu_mem_{row["uuid"]}' not in in_interval:
                 node_anomalies.append(
                         AnomalyRecord(node_id=node.id, pool_id=pool.id, type='gpu', time=row['timestamp'],
                                       resolved=False,
@@ -178,17 +181,9 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
                 new_anomalies.append(anomaly)
                 new += 1
                 if const.EMAIL_NEW:
-                    # mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly",
-                    #                       f"NEW ANOMALY:\n"
-                    #                       f"Time: {str(anomaly.time)}\n"
-                    #                       f"Type: {anomaly.type}\n"
-                    #                       f"Message: {anomaly.message}\n"
-                    #                       f"Severity: {anomaly.severity}\n"
-                    #                       f"\n"
-                    #                       f"Delivered automatically by the Shepherd service."
-                    #                       f"To stop receiving these e-mails, modify the config file.")
-                    mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly",
-                                          mail.make_new_alert_message(anomaly.time, anomaly.type, anomaly.message, anomaly.severity, anomaly.node_id))
+                    mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly Detected",
+                                          mail.make_new_alert_message(anomaly.time, anomaly.type, anomaly.message,
+                                                                      anomaly.severity, anomaly.node_id))
 
         for index, row in node_outstanding_anomalies.loc[node_outstanding_anomalies['found_ongoing'] == 0].iterrows():
             anomaly = session.query(AnomalyRecord).get(row['id'])
@@ -196,16 +191,11 @@ def detect(session: Session, last_run: datetime.datetime, pool: int):
             resolved += 1
             if const.EMAIL_RESOLVED:
                 mail.send_to_sysadmin(f"Node {anomaly.node_id} {anomaly.type.upper()} Anomaly Resolved",
-                                      f"RESOLVED ANOMALY:\n"
-                                      f"Time: {str(anomaly.time)}\n"
-                                      f"Type: {anomaly.type}\n"
-                                      f"Message: {anomaly.message}\n"
-                                      f"Severity: {anomaly.severity}\n"
-                                      f"\n"
-                                      f"Delivered automatically by the Shepherd service. "
-                                      f"To stop receiving these e-mails, modify the config file.")
+                                      mail.make_new_resolved_message(anomaly.time, anomaly.type, anomaly.message,
+                                                                     anomaly.severity, anomaly.node_id))
 
-        print(f"Detection for {node.pool_id}:{node.id} found {new} new and {resolved} resolved anomalies. {len(node_outstanding_anomalies) - resolved} outstanding.")
+        print(
+            f"Detection for {node.pool_id}:{node.id} found {new} new and {resolved} resolved anomalies. {len(node_outstanding_anomalies) - resolved} outstanding.")
 
     """
     Checks list of unresolved anomalies which are now considered resolved and marks them as such
