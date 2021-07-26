@@ -1,3 +1,4 @@
+import datetime
 from threading import Lock
 
 import pandas as pd
@@ -43,22 +44,27 @@ class ShepherdConnection:
         :param num_updates: int # Updates to fetch, most n recent
         :return: pd.DataFrame
         """
+        relevant_cutoff = datetime.datetime.now() - datetime.timedelta(hours=1)
         with self.lock:
             if not no_gpu and not no_disks:
-                query = self.session.query(Update, GPUUpdate, DiskUpdate).filter(Update.node_id == node_id).join(
+                query = self.session.query(Update, GPUUpdate, DiskUpdate).filter(
+                        Update.timestamp >= relevant_cutoff).filter(Update.node_id == node_id).join(
                         GPUUpdate).filter(GPUUpdate.uuid == gpu_uuid).join(DiskUpdate).filter(
                         DiskUpdate.partition_id == disk_id).order_by(desc(Update.timestamp)).limit(num_updates)
             elif no_gpu and not no_disks:
-                query = self.session.query(Update, DiskUpdate).filter(Update.node_id == node_id).join(
-                    DiskUpdate).filter(
+                query = self.session.query(Update, DiskUpdate).filter(
+                        Update.timestamp >= relevant_cutoff).filter(Update.node_id == node_id).join(
+                        DiskUpdate).filter(
                         DiskUpdate.partition_id == disk_id).order_by(desc(Update.timestamp)).limit(num_updates)
             elif no_disks and not no_gpu:
-                query = self.session.query(Update, GPUUpdate).filter(Update.node_id == node_id).join(
+                query = self.session.query(Update, GPUUpdate).filter(
+                        Update.timestamp >= relevant_cutoff).filter(Update.node_id == node_id).join(
                         GPUUpdate).filter(GPUUpdate.uuid == gpu_uuid).order_by(desc(Update.timestamp)).limit(
-                    num_updates)
+                        num_updates)
             else:
-                query = self.session.query(Update).filter(Update.node_id == node_id).order_by(
-                    desc(Update.timestamp)).limit(num_updates)
+                query = self.session.query(Update).filter(
+                        Update.timestamp >= relevant_cutoff).filter(Update.node_id == node_id).order_by(
+                        desc(Update.timestamp)).limit(num_updates)
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_updates(self, node_id: int, num_updates: int):
@@ -68,8 +74,11 @@ class ShepherdConnection:
         :param num_updates: int # Updates to fetch, most n recent
         :return: pd.DataFrame
         """
+        relevant_cutoff = datetime.datetime.now() - datetime.timedelta(hours=1)
         with self.lock:
-            query = self.session.query(Update).filter(Update.node_id == node_id).order_by(desc(Update.timestamp)).limit(
+            query = self.session.query(Update).filter(
+                    Update.timestamp >= relevant_cutoff).filter(Update.node_id == node_id).order_by(
+                desc(Update.timestamp)).limit(
                     num_updates)
             return pd.read_sql(query.statement, query.session.bind)
 
@@ -81,8 +90,10 @@ class ShepherdConnection:
         :param gpu_uuid: GPU UUID from an update. See get_gpus()
         :return: pd.DataFrame
         """
+        relevant_cutoff = datetime.datetime.now() - datetime.timedelta(hours=1)
         with self.lock:
-            query = self.session.query(GPUUpdate, Update).join(Update). \
+            query = self.session.query(GPUUpdate, Update).join(Update).filter(
+                    Update.timestamp >= relevant_cutoff). \
                 filter(and_(GPUUpdate.update.has(node_id=node_id), GPUUpdate.uuid == gpu_uuid)) \
                 .order_by(desc(Update.timestamp)).limit(num_updates)
             return pd.read_sql(query.statement, query.session.bind)
@@ -95,8 +106,10 @@ class ShepherdConnection:
         :param disk_id: Disk ID from an update. See get_disks()
         :return: pd.DataFrame
         """
+        relevant_cutoff = datetime.datetime.now() - datetime.timedelta(hours=1)
         with self.lock:
-            query = self.session.query(DiskUpdate, Update).join(Update). \
+            query = self.session.query(DiskUpdate, Update).join(Update).filter(
+                    Update.timestamp >= relevant_cutoff). \
                 filter(and_(DiskUpdate.update.has(node_id=node_id), DiskUpdate.partition_id == disk_id)) \
                 .order_by(desc(Update.timestamp)).limit(num_updates)
             return pd.read_sql(query.statement, query.session.bind)
@@ -126,7 +139,7 @@ class ShepherdConnection:
         """
         with self.lock:
             query = self.session.query(HistoricalData).filter(HistoricalData.node_id == node_id).order_by(
-                desc(HistoricalData.time))
+                    desc(HistoricalData.time))
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_nodes(self):
@@ -147,8 +160,8 @@ class ShepherdConnection:
         """
         with self.lock:
             self.session.commit()
-            gpus = self.session.query(GPUUpdate.uuid).distinct().join(Update).filter(
-                    GPUUpdate.update.has(node_id=node_id))
+            gpus = self.session.query(GPUUpdate.uuid).filter(
+                    GPUUpdate.update.has(node_id=node_id)).distinct().join(Update)
             return [gpu[0] for gpu in gpus]
 
     def get_disks(self, node_id: int):
@@ -159,8 +172,8 @@ class ShepherdConnection:
         """
         with self.lock:
             self.session.commit()
-            disks = self.session.query(DiskUpdate.partition_id).distinct().join(Update).filter(
-                    DiskUpdate.update.has(node_id=node_id))
+            disks = self.session.query(DiskUpdate.partition_id).filter(
+                    DiskUpdate.update.has(node_id=node_id)).distinct().join(Update)
             return [disk[0] for disk in disks]
 
 

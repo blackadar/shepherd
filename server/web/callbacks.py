@@ -66,7 +66,7 @@ def update_telemetry_graphs(n_intervals, num_updates, node, gpu_uuid, disk_id):
                          title='Virtual RAM',
                  )}
 
-    swap_y = list(updates['ram_percent_swap'] * 100)[::-1]
+    swap_y = list(updates['ram_percent_swap'])[::-1]
     swap_data = plotly.graph_objs.Scatter(
             x=x,
             y=swap_y,
