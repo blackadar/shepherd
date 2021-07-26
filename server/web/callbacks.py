@@ -1,10 +1,10 @@
 from dash.dependencies import Input, Output
-from app import app
+from server.web.app import app
 import plotly
 import plotly.graph_objs as go
 import datetime
-from app import connection
-from connector import format_disks, format_nodes, format_gpus
+from server.web.app import connection
+from server.web.connector import format_disks, format_nodes, format_gpus
 
 
 @app.callback(

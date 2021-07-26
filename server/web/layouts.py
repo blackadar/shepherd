@@ -1,8 +1,8 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from app import connection
-from connector import format_gpus, format_disks, format_nodes
+from server.web.app import connection
+from server.web.connector import format_gpus, format_disks, format_nodes
 import server.constants as const
 
 df_nodes = connection.get_nodes()
