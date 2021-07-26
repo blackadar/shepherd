@@ -1,3 +1,5 @@
+import datetime
+
 import server.constants as const
 import dash
 import threading
@@ -9,10 +11,16 @@ import plotly.graph_objs as go
 from server.web.connector import ShepherdConnection
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], update_title=None)
 app.title = "Shepherd"
 server = app.server
 connection = ShepherdConnection(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA)
+df_nodes = connection.get_nodes()
+default_node = df_nodes[0] if len(df_nodes) > 0 else 0
+df_gpus = connection.get_gpus(default_node)
+default_gpu = df_gpus[0] if len(df_gpus) > 0 else 0
+df_disks = connection.get_disks(default_node)
+default_disk = df_disks[0] if len(df_disks) > 0 else 0
 
 
 def format_nodes():
@@ -24,6 +32,30 @@ def format_nodes():
     res = []
     for node in nodes:
         res.append({'label': f'Node {node}', 'value': node})
+    return res
+
+
+def format_gpus(node_id: int):
+    """
+    Returns GPUs formatted in Dash friendly manner.
+    :return: list of Dicts
+    """
+    gpus = connection.get_gpus(node_id)
+    res = []
+    for gpu in gpus:
+        res.append({'label': f'{gpu}', 'value': gpu})
+    return res
+
+
+def format_disks(node_id: int):
+    """
+    Returns Nodes formatted in Dash friendly manner.
+    :return: list of Dicts
+    """
+    disks = connection.get_disks(node_id)
+    res = []
+    for disk in disks:
+        res.append({'label': f'{disk}', 'value': disk})
     return res
 
 
@@ -51,14 +83,16 @@ navbar = dbc.NavbarSimple(
 app.layout = html.Div(
         [
                 navbar,
+                html.Br(),
                 html.Div([
                         html.Div([
                                 html.H1(f'Node Telemetry', id='title', style={'textAlign': 'center'}),
                                 html.Br(),
                                 dcc.Dropdown(
                                         id='node-dropdown',
+                                        searchable=False,
                                         options=format_nodes(),
-                                        value=connection.get_nodes()[0]),
+                                        value=default_node),
                                 html.Br(),
                                 html.Div([
                                         dcc.Slider(
@@ -96,6 +130,22 @@ app.layout = html.Div(
                 dcc.Graph(id='cpu-graph', animate=True),
                 dcc.Graph(id='vram-graph', animate=True),
                 dcc.Graph(id='swap-graph', animate=True),
+                html.Div([
+                        dcc.Dropdown(
+                                id='gpu-dropdown',
+                                options=format_gpus(connection.get_nodes()[0]),
+                                value=default_gpu,
+                        )
+                ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+                dcc.Graph(id='gpu-graph', animate=True),
+                html.Div([
+                        dcc.Dropdown(
+                                id='disk-dropdown',
+                                options=format_disks(connection.get_nodes()[0]),
+                                value=default_disk,
+                        )
+                ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+                dcc.Graph(id='disk-graph', animate=True),
                 dcc.Interval(
                         id='graph-update',
                         interval=1000,
@@ -107,19 +157,26 @@ app.layout = html.Div(
         Output('cpu-graph', 'figure'),
         Output('vram-graph', 'figure'),
         Output('swap-graph', 'figure'),
+        Output('gpu-graph', 'figure'),
+        Output('disk-graph', 'figure'),
         Output('top-graph1', 'figure'),
         Output('top-graph2', 'figure'),
         Output('top-graph3', 'figure'),
         Output('top-graph4', 'figure'),
         [Input('graph-update', 'n_intervals'),
          Input('sample-slider', 'value'),
-         Input('node-dropdown', 'value')]
+         Input('node-dropdown', 'value'),
+         Input('gpu-dropdown', 'value'),
+         Input('disk-dropdown', 'value')]
 )
-def update_graphs(n_intervals, num_updates, node):
-    df = connection.get_updates(node, num_updates)
-    x = list(df['timestamp'])[::-1]
+def update_graphs(n_intervals, num_updates, node, gpu_uuid, disk_id):
+    updates = connection.get_combined_updates(node, gpu_uuid, disk_id, num_updates, no_gpu=(gpu_uuid == ''), no_disks=(disk_id == ''))
+    x = list(updates['timestamp'])[::-1]
 
-    cpu_y = list(df['cpu_percent_usage'])[::-1]
+    if len(x) == 0:
+        x = [datetime.datetime.now(),]
+
+    cpu_y = list(updates['cpu_percent_usage'])[::-1]
     cpu_data = plotly.graph_objs.Scatter(
             x=x,
             y=cpu_y,
@@ -131,11 +188,11 @@ def update_graphs(n_intervals, num_updates, node):
     cpu_graph = {'data':   [cpu_data],
                  'layout': go.Layout(
                          xaxis=dict(range=[min(x), max(x)]),
-                         yaxis=dict(range=[0, 110]),
+                         yaxis=dict(range=[0, 101]),
                          title='CPU Utilization',
                  )}
 
-    ram_y = list(df['ram_used_virtual'] / df['ram_total_virtual'] * 100)[::-1]
+    ram_y = list(updates['ram_used_virtual'] / updates['ram_total_virtual'] * 100)[::-1]
     ram_data = plotly.graph_objs.Scatter(
             x=x,
             y=ram_y,
@@ -147,11 +204,11 @@ def update_graphs(n_intervals, num_updates, node):
     ram_graph = {'data':   [ram_data],
                  'layout': go.Layout(
                          xaxis=dict(range=[min(x), max(x)]),
-                         yaxis=dict(range=[0, 110]),
+                         yaxis=dict(range=[0, 101]),
                          title='Virtual RAM',
                  )}
 
-    swap_y = list(df['ram_percent_swap'] * 100)[::-1]
+    swap_y = list(updates['ram_percent_swap'] * 100)[::-1]
     swap_data = plotly.graph_objs.Scatter(
             x=x,
             y=swap_y,
@@ -163,17 +220,54 @@ def update_graphs(n_intervals, num_updates, node):
     swap_graph = {'data':   [swap_data],
                   'layout': go.Layout(
                           xaxis=dict(range=[min(x), max(x)]),
-                          yaxis=dict(range=[0, 110]),
+                          yaxis=dict(range=[0, 101]),
                           title='Swap Space',
                   )}
+    if 'load' in updates.keys():
+        gpu_y = list(updates['load'] * 100)[::-1]
+    else:
+        gpu_y = []
+    gpu_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=gpu_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='lightgreen'),
+    )
+    gpu_graph = {'data':   [gpu_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='GPU Utilization',
+                 )}
+
+    if 'percentage_used' in updates.keys():
+        disk_y = list(updates['percentage_used'])[::-1]
+    else:
+        disk_y = []
+    disk_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=disk_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='papayawhip'),
+    )
+    disk_graph = {'data':   [disk_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='Disk Utilization',
+                 )}
 
     cpu_freq_graph = go.Figure(go.Indicator(
             mode='gauge+number',
-            value=df['cpu_current_frequency'].iloc[0],
+            value=updates['cpu_current_frequency'].iloc[0],
             title={'text': 'CPU Frequency'},
             domain={'x': [0, 1], 'y': [0, 1]},
             gauge={
-                    'axis':        {'range':     [None, df['cpu_max_frequency'].iloc[-1]], 'tickwidth': 1,
+                    'axis':        {'range':     [None, updates['cpu_max_frequency'].iloc[-1]], 'tickwidth': 1,
                                     'tickcolor': "darkblue"},
                     'bar':         {'color': "darkblue"},
                     'bgcolor':     "white",
@@ -184,7 +278,7 @@ def update_graphs(n_intervals, num_updates, node):
 
     cpu_1_graph = go.Figure(go.Indicator(
             mode='gauge+number+delta',
-            value=df['cpu_load_1'].iloc[0] * 100,
+            value=updates['cpu_load_1'].iloc[0] * 100,
             number={'suffix': "%"},
             title={'text': '1m Load'},
             domain={'x': [0, 1], 'y': [0, 1]},
@@ -195,12 +289,12 @@ def update_graphs(n_intervals, num_updates, node):
                     'borderwidth': 2,
                     'bordercolor': "gray",
             },
-            delta={'reference': df['cpu_load_1'].iloc[-1] * 100}
+            delta={'reference': updates['cpu_load_1'].iloc[-1] * 100}
     ))
 
     cpu_5_graph = go.Figure(go.Indicator(
             mode='gauge+number+delta',
-            value=df['cpu_load_5'].iloc[0] * 100,
+            value=updates['cpu_load_5'].iloc[0] * 100,
             number={'suffix': "%"},
             title={'text': '5m Load'},
             domain={'x': [0, 1], 'y': [0, 1]},
@@ -211,12 +305,12 @@ def update_graphs(n_intervals, num_updates, node):
                     'borderwidth': 2,
                     'bordercolor': "gray",
             },
-            delta={'reference': df['cpu_load_5'].iloc[-1] * 100}
+            delta={'reference': updates['cpu_load_5'].iloc[-1] * 100}
     ))
 
     cpu_15_graph = go.Figure(go.Indicator(
             mode='gauge+number+delta',
-            value=df['cpu_load_15'].iloc[0] * 100,
+            value=updates['cpu_load_15'].iloc[0] * 100,
             number={'suffix': "%"},
             title={'text': '15m Load'},
             domain={'x': [0, 1], 'y': [0, 1]},
@@ -227,17 +321,41 @@ def update_graphs(n_intervals, num_updates, node):
                     'borderwidth': 2,
                     'bordercolor': "gray",
             },
-            delta={'reference': df['cpu_load_15'].iloc[-1] * 100}
+            delta={'reference': updates['cpu_load_15'].iloc[-1] * 100}
     ))
-    return cpu_graph, ram_graph, swap_graph, cpu_freq_graph, cpu_1_graph, cpu_5_graph, cpu_15_graph
+    return cpu_graph, ram_graph, swap_graph, gpu_graph, disk_graph, cpu_freq_graph, cpu_1_graph, cpu_5_graph, cpu_15_graph
 
 
 @app.callback(
-        dash.dependencies.Output('node-dropdown', 'options'),
-        [dash.dependencies.Input('node-dropdown', 'value')]
+        Output('node-dropdown', 'options'),
+        [Input('node-dropdown', 'value')]
 )
-def update_date_dropdown(name):
+def update_node_dropdown(name):
     return format_nodes()
+
+@app.callback(
+        Output('gpu-dropdown', 'options'),
+        Output('gpu-dropdown', 'value'),
+        [Input('node-dropdown', 'value')]
+)
+def update_gpu_dropdown(node):
+    fmt = format_gpus(node)
+    if len(fmt) > 0:
+        return fmt, fmt[0]['value']
+    else:
+        return [], ''
+
+@app.callback(
+        Output('disk-dropdown', 'options'),
+        Output('disk-dropdown', 'value'),
+        [Input('node-dropdown', 'value')]
+)
+def update_disk_dropdown(node):
+    fmt = format_disks(node)
+    if len(fmt) > 0:
+        return fmt, fmt[0]['value']
+    else:
+        return [], ''
 
 
 if __name__ == "__main__":
