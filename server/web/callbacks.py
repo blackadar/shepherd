@@ -353,9 +353,20 @@ def update_anomalies(n):
         children.append(dbc.Alert(f"Node {row['node_id']} has an unresolved {row['type']} anomaly: "
                                   f"{row['message']} ({row['time']})", color=color))
 
+    children.append(html.Br())
     children.append(html.H1("Resolved"))
     for idx, row in resolved.iterrows():
         children.append(dbc.Alert(f"Node {row['node_id']} had a {row['type']} anomaly: "
                                   f"{row['message']} ({row['time']})", color='dark'))
-
+    children.append(html.Br())
     return html.Div(children)
+
+@app.callback(
+        Output('node-badge', 'children'),
+        Output('anomaly-badge', 'children'),
+        [Input('deck-update', 'n_intervals')]
+)
+def update_home_badges(n):
+    nodes = connection.get_num_nodes()
+    anomalies = connection.get_num_unresolved_anomalies()
+    return nodes, anomalies

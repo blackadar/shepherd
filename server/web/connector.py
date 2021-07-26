@@ -123,6 +123,15 @@ class ShepherdConnection:
             query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 0)
             return pd.read_sql(query.statement, query.session.bind)
 
+    def get_num_unresolved_anomalies(self):
+        """
+        Counts unresolved Anomalies
+        :return: int
+        """
+        with self.lock:
+            unresolved = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 0).count()
+            return unresolved
+
     def get_resolved_anomalies(self):
         """
         Retrieves all resolved Anomalies
@@ -151,6 +160,16 @@ class ShepherdConnection:
             self.session.commit()
             nodes = self.session.query(Update.node_id).distinct()
             return [node[0] for node in nodes]
+
+    def get_num_nodes(self):
+        """
+        Gets the number of Nodes in the table.
+        :return: int
+        """
+        with self.lock:
+            self.session.commit()
+            nodes = self.session.query(Update.node_id).distinct().count()
+            return nodes
 
     def get_gpus(self, node_id: int):
         """
