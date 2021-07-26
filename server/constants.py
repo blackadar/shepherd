@@ -65,3 +65,4 @@ Web Service
 """
 WEB_DEBUG = check_config("WEB", "DEBUG", False, bool)
 WEB_LOCATION = check_config("WEB", "LOCATION", "Work", str)
+WEB_BIND = check_config("WEB", "BIND", "localhost", str)
