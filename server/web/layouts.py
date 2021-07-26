@@ -181,7 +181,7 @@ historical = html.Div(
                     id='hist-node-dropdown',
                     searchable=False,
                     options=format_nodes(connection),
-                    value=connection.get_nodes()[0]),
+                    value=default_node),
                 html.Br(),
             ])
         ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
