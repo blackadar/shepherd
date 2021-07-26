@@ -2,14 +2,13 @@
 Defines a MySQL Database Processor to publish updates to a connected DB.
 Leverages SQLAlchemy to abstract into ORM.
 """
-import timeit
 
 from server.processor import Processor
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
 import datetime
 
-from server.db.mappings import Pool, Node, Update, SessionUpdate, DiskUpdate, GPUUpdate
+from server.db.mappings import Node, Update, SessionUpdate, DiskUpdate, GPUUpdate
 
 
 class MySQLProcessor(Processor):
