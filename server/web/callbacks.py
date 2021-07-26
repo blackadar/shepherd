@@ -261,6 +261,8 @@ def update_historical_graphs(n_intervals, node):
                  )}
 
     ram_y = list(df['avg_ram_used_virt'] / (1000 * 1000 * 1000))[::-1]
+    if len(ram_y) == 0:
+        ram_y = [0, ]
     ram_data = plotly.graph_objs.Scatter(
             x=x,
             y=ram_y,
@@ -277,6 +279,8 @@ def update_historical_graphs(n_intervals, node):
                  )}
 
     swap_y = list(df['avg_ram_used_swap'] / (1000 * 1000 * 1000))[::-1]
+    if len(swap_y) == 0:
+        swap_y = [0, ]
     swap_data = plotly.graph_objs.Scatter(
             x=x,
             y=swap_y,
@@ -293,6 +297,8 @@ def update_historical_graphs(n_intervals, node):
                   )}
 
     disk_y = list(df['total_disk_used'] / (1000 * 1000 * 1000))[::-1]
+    if len(disk_y) == 0:
+        disk_y = [0, ]
     disk_data = plotly.graph_objs.Scatter(
             x=x,
             y=disk_y,
