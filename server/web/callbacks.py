@@ -212,3 +212,99 @@ def update_telemetry_disk_dropdown(node):
         return fmt, fmt[0]['value']
     else:
         return [], ''
+
+
+@app.callback(
+    Output('hist-cpu-graph', 'figure'),
+    Output('hist-vram-graph', 'figure'),
+    Output('hist-swap-graph', 'figure'),
+    Output('hist-disk-graph', 'figure'),
+    Output('hist-gpu-graph', 'figure'),
+    [Input('hist-graph-update', 'n_intervals'),
+     Input('hist-node-dropdown', 'value')]
+)
+def update_historical_graphs(n_intervals, node):
+    df = connection.get_historical(node)
+    x = list(df['time'])[::-1]
+
+    cpu_y = list(df['avg_cpu_percent_usage'])[::-1]
+    cpu_data = plotly.graph_objs.Scatter(
+        x=x,
+        y=cpu_y,
+        name='Scatter',
+        mode='lines+markers',
+        fill='tozeroy',
+        line=dict(width=0.75, color='lightblue'),
+    )
+    cpu_graph = {'data': [cpu_data],
+                 'layout': go.Layout(
+                     xaxis=dict(range=[min(x), max(x)]),
+                     yaxis=dict(range=[0, 110]),
+                     title='Average CPU Utilization',
+                 )}
+
+    ram_y = list(df['avg_ram_used_virt'] / (1000*1000*1000))[::-1]
+    ram_data = plotly.graph_objs.Scatter(
+        x=x,
+        y=ram_y,
+        name='Scatter',
+        mode='lines+markers',
+        fill='tozeroy',
+        line=dict(width=0.75, color='lavender'),
+    )
+    ram_graph = {'data': [ram_data],
+                 'layout': go.Layout(
+                     xaxis=dict(range=[min(x), max(x)]),
+                     yaxis=dict(range=[0, max(ram_y) + 25]),
+                     title='Average Virtual RAM Usage',
+                 )}
+
+    swap_y = list(df['avg_ram_used_swap'] / (1000*1000*1000))[::-1]
+    swap_data = plotly.graph_objs.Scatter(
+        x=x,
+        y=swap_y,
+        name='Scatter',
+        mode='lines+markers',
+        fill='tozeroy',
+        line=dict(color='pink', width=0.75),
+    )
+    swap_graph = {'data': [swap_data],
+                  'layout': go.Layout(
+                      xaxis=dict(range=[min(x), max(x)]),
+                      yaxis=dict(range=[0, max(swap_y) + 25]),
+                      title='Average Swap Space',
+                  )}
+
+    disk_y = list(df['total_disk_used'] / (1000*1000*1000))[::-1]
+    disk_data = plotly.graph_objs.Scatter(
+        x=x,
+        y=disk_y,
+        name='Scatter',
+        mode='lines+markers',
+        fill='tozeroy',
+        line=dict(color='plum', width=0.75),
+    )
+    disk_graph = {'data': [disk_data],
+                  'layout': go.Layout(
+                      xaxis=dict(range=[min(x), max(x)]),
+                      yaxis=dict(range=[0, max(disk_y) + 25]),
+                      title='Average Disk Usage',
+                  )}
+
+    gpu_y = list(df['avg_gpu_load'] * 100)[::-1]
+    gpu_data = plotly.graph_objs.Scatter(
+        x=x,
+        y=gpu_y,
+        name='Scatter',
+        mode='lines+markers',
+        fill='tozeroy',
+        line=dict(color='salmon', width=0.75),
+    )
+    gpu_graph = {'data': [gpu_data],
+                  'layout': go.Layout(
+                      xaxis=dict(range=[min(x), max(x)]),
+                      yaxis=dict(range=[0, 110]),
+                      title='Average GPU Load',
+                  )}
+
+    return cpu_graph, ram_graph, swap_graph, disk_graph, gpu_graph

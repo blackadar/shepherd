@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy import desc, and_
 from sqlalchemy.orm import Session
 
-from server.db.mappings import Update, AnomalyRecord, GPUUpdate, DiskUpdate
+from server.db.mappings import Update, AnomalyRecord, GPUUpdate, DiskUpdate, HistoricalData
 
 
 class ShepherdConnection:
@@ -108,6 +108,16 @@ class ShepherdConnection:
         """
         with self.lock:
             query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 0)
+            return pd.read_sql(query.statement, query.session.bind)
+
+    def get_historical(self, node_id: int):
+        """
+        Retrieves all historical data
+        :return: pd.DataFrame
+        """
+        with self.lock:
+            query = self.session.query(HistoricalData).filter(HistoricalData.node_id == node_id).order_by(
+                desc(HistoricalData.time))
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_nodes(self):

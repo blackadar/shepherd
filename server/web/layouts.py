@@ -169,3 +169,31 @@ telemetry = html.Div(
                         interval=1000,
                         n_intervals=0),
         ])
+
+historical = html.Div(
+    [
+        navbar,
+        html.Div([
+            html.Div([
+                html.H1(f'Historical Data', id='title', style={'textAlign': 'center'}),
+                html.Br(),
+                dcc.Dropdown(
+                    id='hist-node-dropdown',
+                    searchable=False,
+                    options=format_nodes(connection),
+                    value=connection.get_nodes()[0]),
+                html.Br(),
+            ])
+        ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+        html.Br(),
+        dcc.Graph(id='hist-cpu-graph', animate=True),
+        dcc.Graph(id='hist-vram-graph', animate=True),
+        dcc.Graph(id='hist-swap-graph', animate=True),
+        dcc.Graph(id='hist-disk-graph', animate=True),
+        dcc.Graph(id='hist-gpu-graph', animate=True),
+        dcc.Interval(
+            id='hist-graph-update',
+            disabled=False,
+            interval=1000*60*60*48,  # Updates every 2 days
+            n_intervals=0),
+])
