@@ -101,13 +101,22 @@ class ShepherdConnection:
                 .order_by(desc(Update.timestamp)).limit(num_updates)
             return pd.read_sql(query.statement, query.session.bind)
 
-    def get_anomalies(self):
+    def get_unresolved_anomalies(self):
         """
         Retrieves all unresolved Anomalies
         :return: pd.DataFrame
         """
         with self.lock:
             query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 0)
+            return pd.read_sql(query.statement, query.session.bind)
+
+    def get_resolved_anomalies(self):
+        """
+        Retrieves all resolved Anomalies
+        :return: pd.DataFrame
+        """
+        with self.lock:
+            query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 1)
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_historical(self, node_id: int):

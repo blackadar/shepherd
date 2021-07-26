@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import server.constants as const
 from app import app
-from layouts import telemetry, home, historical
+from layouts import telemetry, home, historical, anomaly
 import callbacks
 
 app.layout = html.Div([
@@ -20,7 +20,7 @@ def display_page(pathname):
     elif pathname == '/historical':
         return historical
     elif pathname == '/anomaly':
-        return '500'
+        return anomaly
     elif pathname == '/':
         return home
     else:

@@ -41,7 +41,7 @@ nav_deck = dbc.CardDeck(
                 [
                     html.H5("Node Telemetry", className="card-title"),
                     html.P(
-                        "View live updating plots and figures"
+                        "View live updating plots and figures "
                         "for each Node in your network.",
                         className="card-text",
                     ),
@@ -56,7 +56,7 @@ nav_deck = dbc.CardDeck(
                 [
                     html.H5("Historical Data", className="card-title"),
                     html.P(
-                        "Navigate plots and figures from condensed"
+                        "Navigate plots and figures from condensed "
                         "performance data over time.",
                         className="card-text",
                     ),
@@ -71,7 +71,7 @@ nav_deck = dbc.CardDeck(
                 [
                     html.H5("Anomalies", className="card-title"),
                     html.P(
-                        "See past and present anomalous metrics"
+                        "See past and present anomalous metrics "
                         "from systems on the network.",
                         className="card-text",
                     ),
@@ -196,4 +196,14 @@ historical = html.Div(
             disabled=False,
             interval=1000*60*60*48,  # Updates every 2 days
             n_intervals=0),
+])
+
+anomaly = html.Div([
+        navbar,
+        html.Br(),
+        html.Div(id='anomaly-space', style={'width': '95%', 'margin': 25}),
+        dcc.Interval(
+            id='anomaly-update',
+            interval=1000,
+            n_intervals=0)
 ])

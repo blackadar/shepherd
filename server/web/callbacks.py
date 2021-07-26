@@ -1,4 +1,7 @@
 from dash.dependencies import Input, Output
+import dash_core_components as dcc
+import dash_html_components as html
+import dash_bootstrap_components as dbc
 from app import app
 import plotly
 import plotly.graph_objs as go
@@ -308,3 +311,30 @@ def update_historical_graphs(n_intervals, node):
                   )}
 
     return cpu_graph, ram_graph, swap_graph, disk_graph, gpu_graph
+
+@app.callback(
+        Output('anomaly-space', 'children'),
+        [Input('anomaly-update', 'n_intervals')]
+)
+def update_anomalies(n):
+    unresolved = connection.get_unresolved_anomalies()
+    resolved = connection.get_resolved_anomalies()
+    children = []
+
+    children.append(html.H1("Unresolved"))
+    for idx, row in unresolved.iterrows():
+        if row['severity'] == 'high':
+            color = 'danger'
+        elif row['severity'] == 'medium':
+            color = 'warning'
+        else:
+            color = 'info'
+        children.append(dbc.Alert(f"Node {row['node_id']} has an unresolved {row['type']} anomaly: "
+                                  f"{row['message']} ({row['time']})", color=color))
+
+    children.append(html.H1("Resolved"))
+    for idx, row in resolved.iterrows():
+        children.append(dbc.Alert(f"Node {row['node_id']} had a {row['type']} anomaly: "
+                                  f"{row['message']} ({row['time']})", color='dark'))
+
+    return html.Div(children)
