@@ -59,3 +59,9 @@ EMAIL_RESOLVED = check_config("EMAIL", "SEND_RESOLVED", True, bool)
 EMAIL_API_KEY = check_config("EMAIL", "API_KEY", "none", str)
 EMAIL_DOMAIN = check_config("EMAIL", "DOMAIN", "none", str)
 EMAIL_RECIPIENT = check_config("EMAIL", "RECIPIENT", "none", str)
+
+"""
+Web Service
+"""
+WEB_DEBUG = check_config("WEB", "DEBUG", False, bool)
+WEB_LOCATION = check_config("WEB", "LOCATION", "Work", str)
