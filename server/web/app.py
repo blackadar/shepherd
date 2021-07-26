@@ -1,388 +1,363 @@
-import os
-import datetime as dt
-import sqlalchemy as sa
+import datetime
+
+import server.constants as const
 import dash
+import threading
+from dash.dependencies import Output, Input
 import dash_core_components as dcc
-import dash_html_components as dhtml
+import dash_html_components as html
+import plotly
+import plotly.graph_objs as go
+from server.web.connector import ShepherdConnection
+import dash_bootstrap_components as dbc
 
-from dash.dependencies import Input, Output, State
-from sqlalchemy.orm import Session
-from server.db.mappings import HistoricalData, Node, Update, DiskUpdate, SessionUpdate, GPUUpdate, Pool
-
-GRAPH_INT = os.environ.get("GRAPH_INT", 500)
-
-app = dash.Dash(
-    __name__,
-    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-)
-app.title = "Shepherd Node Management"
-
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], update_title=None)
+app.title = "Shepherd"
 server = app.server
+connection = ShepherdConnection(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA)
+df_nodes = connection.get_nodes()
+default_node = df_nodes[0] if len(df_nodes) > 0 else 0
+df_gpus = connection.get_gpus(default_node)
+default_gpu = df_gpus[0] if len(df_gpus) > 0 else 0
+df_disks = connection.get_disks(default_node)
+default_disk = df_disks[0] if len(df_disks) > 0 else 0
 
-app_color = {"graph_bg": "#082255", "graph_line": "#007ACE"}
 
-app.layout = dhtml.Div(
-    [
-        # header
-        dhtml.Div(
-            [
-                dhtml.Div(
-                    [
-                        dhtml.H4("Shepherd Node Manager", className="app__header__title"),
-                        dhtml.P(
-                            "This app updates with information pertaining to your nodes in real time.",
-                            className="app__header__title--grey",
-                        ),
-                    ],
-                    className="app__header__desc",
-                ),
-                dhtml.Div(
-                    [
-                        dhtml.A(
-                            dhtml.Img(
-                                src=app.get_asset_url("GitHub-Mark.png"),
-                                className="app__menu__img",
-                            ),
-                            href="https://github.com/blackadar/shepherd",
-                        ),
-                    ],
-                    className="app__header__logo",
-                ),
-            ],
-            className="app__header",
-        ),
-        dhtml.Div(
-            [
-                dcc.Dropdown(
-                    id='graph-dropdown',
-                    options=[
-                        {'label': 'CPU', 'value': 'CPU'},
-                        {'label': 'RAM', 'value': 'RAM'},
-                        {'label': 'GPU', 'value': 'GPU'},
-                        {'label': 'Disk', 'value': 'disk'},
-                        {'label': 'Battery', 'value': 'battery'}
-                    ],
-                    value='CPU',
-                    clearable=False
-                ),
-            ],
-            style={"width": "10%"}
-        ),
-        dhtml.Div(
-            [
-                # CPU
-                dhtml.Div(
-                    [
-                        dhtml.Div(
-                            [dhtml.H6("CPU", className="graph__title")]
-                        ),
-                        dcc.Graph(
-                            id="cpu-usage",
-                            figure=dict(
-                                layout=dict(
-                                    plot_bgcolor=app_color["graph_bg"],
-                                    paper_bgcolor=app_color["graph_bg"],
-                                )
-                            ),
-                        ),
-                        dcc.Interval(
-                            id="cpu-usage-update",
-                            interval=int(GRAPH_INT),
-                            n_intervals=0,
-                        ),
-                    ],
-                    hidden=False,
-                    className="two-thirds column cpu_temp",
-                    id="cpu-display"
-                ),
-                # RAM
-                dhtml.Div(
-                    [
-                        dhtml.Div(
-                            [dhtml.H6("RAM", className="graph__title")]
-                        ),
-                        dcc.Graph(
-                            id="ram-usage",
-                            figure=dict(
-                                layout=dict(
-                                    plot_bgcolor=app_color["graph_bg"],
-                                    paper_bgcolor=app_color["graph_bg"],
-                                )
-                            ),
-                        ),
-                        dcc.Interval(
-                            id="ram-usage-update",
-                            interval=int(GRAPH_INT),
-                            n_intervals=0,
-                        ),
-                    ],
-                    hidden=True,
-                    className="two-thirds column ram_temp",
-                    id="ram-display"
+def format_nodes():
+    """
+    Returns Nodes formatted in Dash friendly manner.
+    :return: list of Dicts
+    """
+    nodes = connection.get_nodes()
+    res = []
+    for node in nodes:
+        res.append({'label': f'Node {node}', 'value': node})
+    return res
 
+
+def format_gpus(node_id: int):
+    """
+    Returns GPUs formatted in Dash friendly manner.
+    :return: list of Dicts
+    """
+    gpus = connection.get_gpus(node_id)
+    res = []
+    for gpu in gpus:
+        res.append({'label': f'{gpu}', 'value': gpu})
+    return res
+
+
+def format_disks(node_id: int):
+    """
+    Returns Nodes formatted in Dash friendly manner.
+    :return: list of Dicts
+    """
+    disks = connection.get_disks(node_id)
+    res = []
+    for disk in disks:
+        res.append({'label': f'{disk}', 'value': disk})
+    return res
+
+
+navbar = dbc.NavbarSimple(
+        children=[
+                dbc.NavItem(dbc.NavLink("Page 1", href="#")),
+                dbc.DropdownMenu(
+                        children=[
+                                dbc.DropdownMenuItem("More pages", header=True),
+                                dbc.DropdownMenuItem("Page 2", href="#"),
+                                dbc.DropdownMenuItem("Page 3", href="#"),
+                        ],
+                        nav=True,
+                        in_navbar=True,
+                        label="More",
                 ),
-                # GPU
-                dhtml.Div(
-                    [
-                        dhtml.Div(
-                            [dhtml.H6("GPU", className="graph__title")]
-                        ),
-                        dcc.Graph(
-                            id="gpu-usage",
-                            figure=dict(
-                                layout=dict(
-                                    plot_bgcolor=app_color["graph_bg"],
-                                    paper_bgcolor=app_color["graph_bg"],
-                                )
-                            ),
-                        ),
-                        dcc.Interval(
-                            id="gpu-usage-update",
-                            interval=int(GRAPH_INT),
-                            n_intervals=0,
-                        ),
-                    ],
-                    hidden=True,
-                    className="two-thirds column gpu_temp",
-                    id="gpu-display"
-                ),
-                # Disk
-                dhtml.Div(
-                    [
-                        dhtml.Div(
-                            [dhtml.H6("Disk", className="graph__title")]
-                        ),
-                        dcc.Graph(
-                            id="disk-usage",
-                            figure=dict(
-                                layout=dict(
-                                    plot_bgcolor=app_color["graph_bg"],
-                                    paper_bgcolor=app_color["graph_bg"],
-                                )
-                            ),
-                        ),
-                        dcc.Interval(
-                            id="disk-usage-update",
-                            interval=int(GRAPH_INT),
-                            n_intervals=0,
-                        ),
-                    ],
-                    hidden=True,
-                    className="two-thirds column disk_temp",
-                    id="disk-display"
-                ),
-                # Battery
-                dhtml.Div(
-                    [
-                        dhtml.Div(
-                            [dhtml.H6("Battery", className="graph__title")]
-                        ),
-                        dcc.Graph(
-                            id="battery-usage",
-                            figure=dict(
-                                layout=dict(
-                                    plot_bgcolor=app_color["graph_bg"],
-                                    paper_bgcolor=app_color["graph_bg"],
-                                )
-                            ),
-                        ),
-                        dcc.Interval(
-                            id="battery-usage-update",
-                            interval=int(GRAPH_INT),
-                            n_intervals=0,
-                        ),
-                    ],
-                    hidden=True,
-                    className="two-thirds column battery_temp",
-                    id="battery-display"
-                ),
-                dhtml.Div(
-                    [
-                        # histogram
-                        dhtml.Div(
-                            [
-                                dhtml.Div(
-                                    [
-                                        dhtml.H6(
-                                            "WIND SPEED HISTOGRAM",
-                                            className="graph__title",
-                                        )
-                                    ]
-                                ),
-                                dhtml.Div(
-                                    [
-                                        dcc.Slider(
-                                            id="bin-slider",
-                                            min=1,
-                                            max=60,
-                                            step=1,
-                                            value=20,
-                                            updatemode="drag",
-                                            marks={
-                                                20: {"label": "20"},
-                                                40: {"label": "40"},
-                                                60: {"label": "60"},
-                                            },
-                                        )
-                                    ],
-                                    className="slider",
-                                ),
-                                dhtml.Div(
-                                    [
-                                        dcc.Checklist(
-                                            id="bin-auto",
-                                            options=[
-                                                {"label": "Auto", "value": "Auto"}
-                                            ],
-                                            value=["Auto"],
-                                            inputClassName="auto__checkbox",
-                                            labelClassName="auto__label",
-                                        ),
-                                        dhtml.P(
-                                            "# of Bins: Auto",
-                                            id="bin-size",
-                                            className="auto__p",
-                                        ),
-                                    ],
-                                    className="auto__container",
-                                ),
-                                dcc.Graph(
-                                    id="wind-histogram",
-                                    figure=dict(
-                                        layout=dict(
-                                            plot_bgcolor=app_color["graph_bg"],
-                                            paper_bgcolor=app_color["graph_bg"],
-                                        )
-                                    ),
-                                ),
-                            ],
-                            hidden=True,
-                            className="graph__container first",
-                        ),
-                        # wind direction
-                        dhtml.Div(
-                            [
-                                dhtml.Div(
-                                    [
-                                        dhtml.H6(
-                                            "WIND DIRECTION", className="graph__title"
-                                        )
-                                    ]
-                                ),
-                                dcc.Graph(
-                                    id="wind-direction",
-                                    figure=dict(
-                                        layout=dict(
-                                            plot_bgcolor=app_color["graph_bg"],
-                                            paper_bgcolor=app_color["graph_bg"],
-                                        )
-                                    ),
-                                ),
-                            ],
-                            hidden=True,
-                            className="graph__container second",
-                        ),
-                    ],
-                    className="one-third column histogram__direction",
-                ),
-            ],
-            className="app__content",
-        ),
-    ],
-    className="app__container",
+        ],
+        brand="Shepherd",
+        brand_href="#",
+        brand_style={'align': 'left'},
+        color="dark",
+        dark=True,
 )
 
+app.layout = html.Div(
+        [
+                navbar,
+                html.Br(),
+                html.Div([
+                        html.Div([
+                                html.H1(f'Node Telemetry', id='title', style={'textAlign': 'center'}),
+                                html.Br(),
+                                dcc.Dropdown(
+                                        id='node-dropdown',
+                                        searchable=False,
+                                        options=format_nodes(),
+                                        value=default_node),
+                                html.Br(),
+                                html.Div([
+                                        dcc.Slider(
+                                                id='sample-slider',
+                                                min=10,
+                                                max=310,
+                                                value=10,
+                                                step=50,
+                                                marks={str(i): str(i - 10) for i in range(10, 310, 50)}),
+                                ])])
+                ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+                html.Div([
+                        html.Div([
+                                dcc.Graph(
+                                        id='top-graph1'
+                                ),
+                        ], style={'width': '25%', 'display': 'inline-block'}),
+                        html.Div([
+                                dcc.Graph(
+                                        id='top-graph2'
+                                ),
+                        ], style={'width': '25%', 'display': 'inline-block'}),
+                        html.Div([
+                                dcc.Graph(
+                                        id='top-graph3'
+                                ),
+                        ], style={'width': '25%', 'display': 'inline-block'}),
+                        html.Div([
+                                dcc.Graph(
+                                        id='top-graph4'
+                                ),
+                        ], style={'width': '25%', 'display': 'inline-block'}),
+                ]),
+                html.Br(),
+                dcc.Graph(id='cpu-graph', animate=True),
+                dcc.Graph(id='vram-graph', animate=True),
+                dcc.Graph(id='swap-graph', animate=True),
+                html.Div([
+                        dcc.Dropdown(
+                                id='gpu-dropdown',
+                                options=format_gpus(connection.get_nodes()[0]),
+                                value=default_gpu,
+                        )
+                ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+                dcc.Graph(id='gpu-graph', animate=True),
+                html.Div([
+                        dcc.Dropdown(
+                                id='disk-dropdown',
+                                options=format_disks(connection.get_nodes()[0]),
+                                value=default_disk,
+                        )
+                ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
+                dcc.Graph(id='disk-graph', animate=True),
+                dcc.Interval(
+                        id='graph-update',
+                        interval=1000,
+                        n_intervals=0),
+        ])
 
-def setup(host: str, port: int, user: str, password: str, dbname: str, verbose=False):
-    """
-    Sets up connection to DB
-    :param host:
-    :param port:
-    :param user:
-    :param password:
-    :param dbname:
-    :param verbose:
-    :return:
-    """
-    # Create DB Session
-    print("Connecting to Database...")
-    engine = sa.create_engine(f"mysql://{user}:{password}@{host}:{port}/"
-                              f"{dbname}", echo=verbose)
-    session = Session(engine)
-    return session
+
+@app.callback(
+        Output('cpu-graph', 'figure'),
+        Output('vram-graph', 'figure'),
+        Output('swap-graph', 'figure'),
+        Output('gpu-graph', 'figure'),
+        Output('disk-graph', 'figure'),
+        Output('top-graph1', 'figure'),
+        Output('top-graph2', 'figure'),
+        Output('top-graph3', 'figure'),
+        Output('top-graph4', 'figure'),
+        [Input('graph-update', 'n_intervals'),
+         Input('sample-slider', 'value'),
+         Input('node-dropdown', 'value'),
+         Input('gpu-dropdown', 'value'),
+         Input('disk-dropdown', 'value')]
+)
+def update_graphs(n_intervals, num_updates, node, gpu_uuid, disk_id):
+    updates = connection.get_combined_updates(node, gpu_uuid, disk_id, num_updates, no_gpu=(gpu_uuid == ''), no_disks=(disk_id == ''))
+    x = list(updates['timestamp'])[::-1]
+
+    if len(x) == 0:
+        x = [datetime.datetime.now(),]
+
+    cpu_y = list(updates['cpu_percent_usage'])[::-1]
+    cpu_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=cpu_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='lightblue'),
+    )
+    cpu_graph = {'data':   [cpu_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='CPU Utilization',
+                 )}
+
+    ram_y = list(updates['ram_used_virtual'] / updates['ram_total_virtual'] * 100)[::-1]
+    ram_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=ram_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='lavender'),
+    )
+    ram_graph = {'data':   [ram_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='Virtual RAM',
+                 )}
+
+    swap_y = list(updates['ram_percent_swap'] * 100)[::-1]
+    swap_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=swap_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(color='lavenderblush', width=0.75),
+    )
+    swap_graph = {'data':   [swap_data],
+                  'layout': go.Layout(
+                          xaxis=dict(range=[min(x), max(x)]),
+                          yaxis=dict(range=[0, 101]),
+                          title='Swap Space',
+                  )}
+    if 'load' in updates.keys():
+        gpu_y = list(updates['load'] * 100)[::-1]
+    else:
+        gpu_y = []
+    gpu_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=gpu_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='lightgreen'),
+    )
+    gpu_graph = {'data':   [gpu_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='GPU Utilization',
+                 )}
+
+    if 'percentage_used' in updates.keys():
+        disk_y = list(updates['percentage_used'])[::-1]
+    else:
+        disk_y = []
+    disk_data = plotly.graph_objs.Scatter(
+            x=x,
+            y=disk_y,
+            name='Scatter',
+            mode='lines+markers',
+            fill='tozeroy',
+            line=dict(width=0.75, color='papayawhip'),
+    )
+    disk_graph = {'data':   [disk_data],
+                 'layout': go.Layout(
+                         xaxis=dict(range=[min(x), max(x)]),
+                         yaxis=dict(range=[0, 101]),
+                         title='Disk Utilization',
+                 )}
+
+    cpu_freq_graph = go.Figure(go.Indicator(
+            mode='gauge+number',
+            value=updates['cpu_current_frequency'].iloc[0],
+            title={'text': 'CPU Frequency'},
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                    'axis':        {'range':     [None, updates['cpu_max_frequency'].iloc[-1]], 'tickwidth': 1,
+                                    'tickcolor': "darkblue"},
+                    'bar':         {'color': "darkblue"},
+                    'bgcolor':     "white",
+                    'borderwidth': 2,
+                    'bordercolor': "gray",
+            }
+    ))
+
+    cpu_1_graph = go.Figure(go.Indicator(
+            mode='gauge+number+delta',
+            value=updates['cpu_load_1'].iloc[0] * 100,
+            number={'suffix': "%"},
+            title={'text': '1m Load'},
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                    'axis':        {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
+                    'bar':         {'color': "darkblue"},
+                    'bgcolor':     "white",
+                    'borderwidth': 2,
+                    'bordercolor': "gray",
+            },
+            delta={'reference': updates['cpu_load_1'].iloc[-1] * 100}
+    ))
+
+    cpu_5_graph = go.Figure(go.Indicator(
+            mode='gauge+number+delta',
+            value=updates['cpu_load_5'].iloc[0] * 100,
+            number={'suffix': "%"},
+            title={'text': '5m Load'},
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                    'axis':        {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
+                    'bar':         {'color': "darkblue"},
+                    'bgcolor':     "white",
+                    'borderwidth': 2,
+                    'bordercolor': "gray",
+            },
+            delta={'reference': updates['cpu_load_5'].iloc[-1] * 100}
+    ))
+
+    cpu_15_graph = go.Figure(go.Indicator(
+            mode='gauge+number+delta',
+            value=updates['cpu_load_15'].iloc[0] * 100,
+            number={'suffix': "%"},
+            title={'text': '15m Load'},
+            domain={'x': [0, 1], 'y': [0, 1]},
+            gauge={
+                    'axis':        {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
+                    'bar':         {'color': "darkblue"},
+                    'bgcolor':     "white",
+                    'borderwidth': 2,
+                    'bordercolor': "gray",
+            },
+            delta={'reference': updates['cpu_load_15'].iloc[-1] * 100}
+    ))
+    return cpu_graph, ram_graph, swap_graph, gpu_graph, disk_graph, cpu_freq_graph, cpu_1_graph, cpu_5_graph, cpu_15_graph
 
 
-def get_current_time():
-    """ Helper function to get the current time in seconds. """
+@app.callback(
+        Output('node-dropdown', 'options'),
+        [Input('node-dropdown', 'value')]
+)
+def update_node_dropdown(name):
+    return format_nodes()
 
-    now = dt.datetime.now()
-    total_time = (now.hour * 3600) + (now.minute * 60) + (now.second)
-    return total_time
+@app.callback(
+        Output('gpu-dropdown', 'options'),
+        Output('gpu-dropdown', 'value'),
+        [Input('node-dropdown', 'value')]
+)
+def update_gpu_dropdown(node):
+    fmt = format_gpus(node)
+    if len(fmt) > 0:
+        return fmt, fmt[0]['value']
+    else:
+        return [], ''
 
+@app.callback(
+        Output('disk-dropdown', 'options'),
+        Output('disk-dropdown', 'value'),
+        [Input('node-dropdown', 'value')]
+)
+def update_disk_dropdown(node):
+    fmt = format_disks(node)
+    if len(fmt) > 0:
+        return fmt, fmt[0]['value']
+    else:
+        return [], ''
 
-def update():
-    return
-
-
-#@app.callback(
-#    Output("cpu-usage", "figure"), [Input("cpu-usage-update", "n_intervals")]
-#)
-#def gen_cpu_usage(interval):
-#    """
-#    Generate the wind speed graph.
-#    :params interval: update the graph based on an interval
-#    """
-#
-#    total_time = get_current_time()
-#    df = get_wind_data(total_time - 200, total_time)
-#
-#    trace = dict(
-#        type="scatter",
-#        y=df["Speed"],
-#        line={"color": "#42C4F7"},
-#        hoverinfo="skip",
-#        error_y={
-#            "type": "data",
-#            "array": df["SpeedError"],
-#            "thickness": 1.5,
-#            "width": 2,
-#            "color": "#B4E8FC",
-#        },
-#        mode="lines",
-#    )
-#
-#    layout = dict(
-#        plot_bgcolor=app_color["graph_bg"],
-#        paper_bgcolor=app_color["graph_bg"],
-#        font={"color": "#fff"},
-#        height=700,
-#        xaxis={
-#            "range": [0, 200],
-#            "showline": True,
-#            "zeroline": False,
-#            "fixedrange": True,
-#            "tickvals": [0, 50, 100, 150, 200],
-#            "ticktext": ["200", "150", "100", "50", "0"],
-#            "title": "Time Elapsed (sec)",
-#        },
-#        yaxis={
-#            "range": [
-#                min(0, min(df["Speed"])),
-#                max(45, max(df["Speed"]) + max(df["SpeedError"])),
-#            ],
-#            "showgrid": True,
-#            "showline": True,
-#            "fixedrange": True,
-#            "zeroline": False,
-#            "gridcolor": app_color["graph_line"],
-#            "nticks": max(6, round(df["Speed"].iloc[-1] / 10)),
-#        },
-#    )
-#
-#    return dict(data=[trace], layout=layout)
-
-def main():
-    session = setup('64.227.2.44', 3306, 'shepherd', 'Tcg3Dvq2', 'shepherd')
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    d = threading.Thread(target=app.run_server)
+    d.start()
