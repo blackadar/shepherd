@@ -2,12 +2,12 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from app import app
+from server.web.app import app
 import plotly
 import plotly.graph_objs as go
 import datetime
-from app import connection
-from connector import format_disks, format_nodes, format_gpus
+from server.web.app import connection
+from server.web.connector import format_disks, format_nodes, format_gpus
 
 
 @app.callback(

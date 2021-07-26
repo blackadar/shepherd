@@ -1,19 +1,19 @@
 """
-Runs the Shepherd server serv-ice.
+Run this file to run:
+net\__main__.py
+web\index.py
+detect\anomaly_service.py
 """
-from server.net.broker import Broker
-from server.net.collector import Collector
-from server.processor import ConsoleProcessor
-from server.db.mysql_processor import MySQLProcessor
-import server.constants as const
-
-
-def main():
-    broker = Broker(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA)
-    collector = Collector()
-    collector.add_processor(ConsoleProcessor())
-    collector.add_processor(MySQLProcessor(const.DB_URL, const.DB_PORT, const.DB_USER, const.DB_PASSWORD, const.DB_SCHEMA))
-
+from server.detect import anomaly_service
+from server.net import __main__
+from server.web import index
+from multiprocessing import Process
 
 if __name__ == '__main__':
-    main()
+    a_service = Process(target=anomaly_service.main)
+    a_service.start()
+    net_cont = Process(target=__main__.main)
+    net_cont.start()
+    web = Process(target=index.main)
+    web.start()
+    a_service.join()
