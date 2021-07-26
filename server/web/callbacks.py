@@ -221,6 +221,14 @@ def update_telemetry_disk_dropdown(node):
 
 
 @app.callback(
+        Output('hist-node-dropdown', 'options'),
+        [Input('hist-node-dropdown', 'value')]
+)
+def update_telemetry_node_dropdown(name):
+    return format_nodes(connection)
+
+
+@app.callback(
         Output('hist-cpu-graph', 'figure'),
         Output('hist-vram-graph', 'figure'),
         Output('hist-swap-graph', 'figure'),
@@ -232,6 +240,9 @@ def update_telemetry_disk_dropdown(node):
 def update_historical_graphs(n_intervals, node):
     df = connection.get_historical(node)
     x = list(df['time'])[::-1]
+
+    if len(df) == 0:
+        x = [datetime.datetime.now(), ]
 
     cpu_y = list(df['avg_cpu_percent_usage'])[::-1]
     cpu_data = plotly.graph_objs.Scatter(
