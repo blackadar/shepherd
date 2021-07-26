@@ -151,7 +151,7 @@ telemetry = html.Div(
                 html.Div([
                         dcc.Dropdown(
                                 id='gpu-dropdown',
-                                options=format_gpus(connection, connection.get_nodes()[0]),
+                                options=format_gpus(connection, default_node),
                                 value=default_gpu,
                         )
                 ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
@@ -159,7 +159,7 @@ telemetry = html.Div(
                 html.Div([
                         dcc.Dropdown(
                                 id='disk-dropdown',
-                                options=format_disks(connection, connection.get_nodes()[0]),
+                                options=format_disks(connection, default_node),
                                 value=default_disk,
                         )
                 ], style={'width': '66%', 'padding-left': '33%', 'padding-right': '1%'}),
