@@ -56,6 +56,7 @@ class HistoricalData(Base):
     id = Column(Integer, primary_key=True)
     node_id = Column(Integer, nullable=False)
     pool_id = Column(Integer, nullable=False)
+    time = Column(DateTime, nullable=False)
     avg_cpu_curr_freq = Column(Float)
     avg_cpu_percent_usage = Column(Float)
     avg_cpu_load_1 = Column(Float)
