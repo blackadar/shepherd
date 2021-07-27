@@ -39,7 +39,10 @@ class Collector:
             for p in self._processors:
                 p: Processor
                 a = timeit.default_timer()
-                p.update(report.pool_id, report.node_id, MessageToDict(report))
+                try:
+                    p.update(report.pool_id, report.node_id, MessageToDict(report))
+                except Exception as e:
+                    print(f"Exception while updating {p.processor_name()} processor: {str(e)}")
                 b = timeit.default_timer()
                 print(f"{p.processor_name()}: {b - a}s")
 
