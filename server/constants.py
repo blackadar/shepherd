@@ -36,7 +36,7 @@ DB_URL = check_config("DATABASE", "URL", "localhost", str)
 DB_PORT = check_config("DATABASE", "PORT", 3306, int)
 DB_USER = check_config("DATABASE", "USER", "shepherd", str)
 DB_PASSWORD = check_config("DATABASE", "PASSWORD", "shepherd", str)
-DB_SCHEMA = check_config("DATABASE", "SCEMA", "shepherd", str)
+DB_SCHEMA = check_config("DATABASE", "SCHEMA", "shepherd", str)
 
 """
 Instantaneous Anomaly Limits
