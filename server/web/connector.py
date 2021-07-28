@@ -141,6 +141,16 @@ class ShepherdConnection:
             query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 1)
             return pd.read_sql(query.statement, query.session.bind)
 
+    def get_num_unresolved_anomalies_node(self, node_id: int):
+        """
+        Counts the number of unresolved node anomalies
+        :param node_id: int Node ID
+        :return: int Number of unresolved anomalies
+        """
+        with self.lock:
+            query = self.session.query(AnomalyRecord).filter(AnomalyRecord.node_id == node_id).filter(AnomalyRecord.resolved == 0).count()
+            return query
+
     def get_historical(self, node_id: int):
         """
         Retrieves all historical data

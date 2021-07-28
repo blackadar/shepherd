@@ -19,6 +19,7 @@ navbar = dbc.NavbarSimple(
                 dbc.DropdownMenu(
                         children=[
                                 dbc.DropdownMenuItem("Services", header=True),
+                                dbc.DropdownMenuItem("Overview", href="/overview"),
                                 dbc.DropdownMenuItem("Telemetry", href="/telemetry"),
                                 dbc.DropdownMenuItem("Historical", href="/historical"),
                                 dbc.DropdownMenuItem("Anomaly", href="/anomaly"),
@@ -216,4 +217,16 @@ anomaly = html.Div([
                 id='anomaly-update',
                 interval=1000,
                 n_intervals=0)
+])
+
+overview = html.Div([
+        navbar,
+        html.Br(),
+        html.H1(f'Node Overview', id='title', style={'textAlign': 'center'}),
+        html.Br(),
+        html.Div(id='overview-space', style={'width': '95%', 'margin': 25}),
+        dcc.Interval(
+                id='overview-update',
+                interval=3000,
+                n_intervals=0),
 ])
