@@ -226,6 +226,8 @@ def format_nodes(connection):
     pairs = connection.get_node_name_pairs()
     res = []
     for node, name in pairs:
+        if name.lower() == 'node':
+            name = f'Node {node}'
         res.append({'label': f'{name}', 'value': node})
     return res
 
