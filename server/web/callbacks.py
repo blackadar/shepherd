@@ -4,7 +4,8 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import plotly
 import plotly.graph_objs as go
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 from server.web.app import app, connection
 from server.web.connector import format_disks, format_nodes, format_gpus
@@ -359,6 +360,50 @@ def update_anomalies(n):
         children.append(dbc.Alert(f"Node {row['node_id']} had a {row['type']} anomaly: "
                                   f"{row['message']} ({row['time']})", color='dark'))
     children.append(html.Br())
+    return html.Div(children)
+
+@app.callback(
+        Output('overview-space', 'children'),
+        [Input('overview-update', 'n_intervals')]
+)
+def update_overview(n):
+    nodes = connection.get_nodes()
+    children = []
+
+    for node in nodes:
+        updates = connection.get_updates(node, 1)
+        anomalies = connection.get_num_unresolved_anomalies_node(node)
+        fill_2 = f'{anomalies} outstanding anomal' + ('y' if anomalies == 1 else 'ies')
+        if len(updates) > 0:
+            update = updates.iloc[0]
+            timestamp = update['timestamp']
+            cores = update['cpu_logical_cores']
+            frequency = update['cpu_max_frequency']
+            ram = update['ram_total_virtual']
+            uptime = update['session_uptime']
+            lead = f'Last Reported {timestamp}'
+            fill = f'{cores} cores @ {frequency/1000: 0.2f} GHz, ' \
+                   f'{ram / 1024 / 1000000: 0.1f} GB RAM, ' \
+                   f'{uptime / 60 / 60 : 0.2f} hours uptime'
+        else:
+            lead = "No recent updates."
+            fill = "This node appears to have stopped reporting."
+        children.append(html.Br())
+        children.append(dbc.Jumbotron([
+                html.H1(f"Node {node}", className="display-3"),
+                html.P(
+                        f"{lead}",
+                        className="lead",
+                ),
+                html.Hr(className="my-2"),
+                html.P(
+                        f"{fill}",
+                ),
+                html.P(
+                        f"{fill_2}",
+                )
+        ]))
+
     return html.Div(children)
 
 @app.callback(
