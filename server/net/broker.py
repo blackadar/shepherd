@@ -48,12 +48,16 @@ class Broker:
             message = self.socket.recv()
             negotiation = Negotiation()
             negotiation.ParseFromString(message)
+            node_name = negotiation.node_name or 'Node'
             response = Negotiation()
             if negotiation.node_proposes_id:
+                db_node = self.session.get(Node, {'id': negotiation.node_id, 'pool_id': self.pool_id})
                 valid = Broker.check_id_exists(negotiation.node_id) and negotiation.pool_id == self.pool_id and\
-                    self.session.get(Node, {'id': negotiation.node_id, 'pool_id': self.pool_id}) is not None
-                print(f"Node connection proposes ID {negotiation.node_id}. Valid: {valid}.")
+                    db_node is not None
+                print(f"Node connection ({node_name}) proposes ID {negotiation.node_id}. Valid: {valid}.")
                 if valid:
+                    db_node.name = node_name
+                    self.session.commit()
                     response.server_approve = True
                     response.node_id = negotiation.node_id
                     response.pool_id = negotiation.pool_id
@@ -62,7 +66,8 @@ class Broker:
                     response.server_approve = False
             else:
                 node_id = Broker.generate_new_id()
-                self.session.add(Node(id=node_id, pool_id=self.pool_id))
+                print(f"Node connection ({node_name}) assigned new ID {node_id}.")
+                self.session.add(Node(id=node_id, pool_id=self.pool_id, name=node_name))
                 self.session.commit()
                 response.server_approve = True
                 response.pool_id = self.pool_id

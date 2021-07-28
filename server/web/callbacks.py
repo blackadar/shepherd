@@ -351,13 +351,13 @@ def update_anomalies(n):
             color = 'warning'
         else:
             color = 'info'
-        children.append(dbc.Alert(f"Node {row['node_id']} has an unresolved {row['type']} anomaly: "
+        children.append(dbc.Alert(f"{(row['name']) if row['name'].lower() != 'node' else ('Node ' + str(row['node_id']))} has an unresolved {row['type']} anomaly: "
                                   f"{row['message']} ({row['time']})", color=color))
 
     children.append(html.Br())
     children.append(html.H1("Resolved"))
     for idx, row in resolved.iterrows():
-        children.append(dbc.Alert(f"Node {row['node_id']} had a {row['type']} anomaly: "
+        children.append(dbc.Alert(f"{(row['name']) if row['name'].lower() != 'node' else ('Node ' + str(row['node_id']))} had a {row['type']} anomaly: "
                                   f"{row['message']} ({row['time']})", color='dark'))
     children.append(html.Br())
     return html.Div(children)
@@ -367,12 +367,12 @@ def update_anomalies(n):
         [Input('overview-update', 'n_intervals')]
 )
 def update_overview(n):
-    nodes = connection.get_nodes()
+    pairs = connection.get_node_name_pairs()
     children = []
 
-    for node in nodes:
-        updates = connection.get_updates(node, 1)
-        anomalies = connection.get_num_unresolved_anomalies_node(node)
+    for node_id, node_name in pairs:
+        updates = connection.get_updates(node_id, 1)
+        anomalies = connection.get_num_unresolved_anomalies_node(node_id)
         fill_2 = f'{anomalies} outstanding anomal' + ('y' if anomalies == 1 else 'ies')
         if len(updates) > 0:
             update = updates.iloc[0]
@@ -390,7 +390,7 @@ def update_overview(n):
             fill = "This node appears to have stopped reporting."
         children.append(html.Br())
         children.append(dbc.Jumbotron([
-                html.H1(f"Node {node}", className="display-3"),
+                html.H1(f"{node_name}{(' ' + str(node_id)) if (node_name.lower() == 'node') else ''}", className="display-3"),
                 html.P(
                         f"{lead}",
                         className="lead",

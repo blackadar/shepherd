@@ -12,6 +12,7 @@ create table Node
 (
 	id int not null,
 	pool_id int not null,
+	name varchar(100) default 'Node' null,
 	constraint Node_pk
 		primary key (pool_id, id),
 	constraint Node_Pool__fk
