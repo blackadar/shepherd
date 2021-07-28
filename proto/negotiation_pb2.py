@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x11negotiation.proto\"y\n\x0bNegotiation\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x0f\n\x07node_id\x18\x02 \x01(\r\x12\x18\n\x10node_proposes_id\x18\x03 \x01(\x08\x12\x16\n\x0eserver_approve\x18\x04 \x01(\x08\x12\x16\n\x0e\x63ollector_port\x18\x05 \x01(\rb\x06proto3'
+  serialized_pb=b'\n\x11negotiation.proto\"\x8c\x01\n\x0bNegotiation\x12\x0f\n\x07pool_id\x18\x01 \x01(\r\x12\x0f\n\x07node_id\x18\x02 \x01(\r\x12\x18\n\x10node_proposes_id\x18\x03 \x01(\x08\x12\x16\n\x0eserver_approve\x18\x04 \x01(\x08\x12\x16\n\x0e\x63ollector_port\x18\x05 \x01(\r\x12\x11\n\tnode_name\x18\x06 \x01(\tb\x06proto3'
 )
 
 
@@ -68,6 +68,13 @@ _NEGOTIATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='node_name', full_name='Negotiation.node_name', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -80,8 +87,8 @@ _NEGOTIATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21,
-  serialized_end=142,
+  serialized_start=22,
+  serialized_end=162,
 )
 
 DESCRIPTOR.message_types_by_name['Negotiation'] = _NEGOTIATION

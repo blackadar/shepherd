@@ -6,7 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy import desc, and_
 from sqlalchemy.orm import Session
 
-from server.db.mappings import Update, AnomalyRecord, GPUUpdate, DiskUpdate, HistoricalData
+from server.db.mappings import Update, AnomalyRecord, GPUUpdate, DiskUpdate, HistoricalData, Node
 
 
 class ShepherdConnection:
@@ -120,7 +120,7 @@ class ShepherdConnection:
         :return: pd.DataFrame
         """
         with self.lock:
-            query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 0)
+            query = self.session.query(AnomalyRecord, Node).join(Node).filter(AnomalyRecord.resolved == 0)
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_num_unresolved_anomalies(self):
@@ -138,7 +138,7 @@ class ShepherdConnection:
         :return: pd.DataFrame
         """
         with self.lock:
-            query = self.session.query(AnomalyRecord).filter(AnomalyRecord.resolved == 1)
+            query = self.session.query(AnomalyRecord, Node).join(Node).filter(AnomalyRecord.resolved == 1)
             return pd.read_sql(query.statement, query.session.bind)
 
     def get_num_unresolved_anomalies_node(self, node_id: int):
@@ -170,6 +170,17 @@ class ShepherdConnection:
             self.session.commit()
             nodes = self.session.query(Update.node_id).distinct()
             return [node[0] for node in nodes]
+
+    def get_node_name_pairs(self):
+        """
+        Gets all Node IDs, and their names.
+        :return: list of tuples (id: int, name: str)
+        """
+        with self.lock:
+            self.session.commit()
+            nodes = self.session.query(Node).all()
+            pairs = [(node.id, node.name) for node in nodes]
+            return pairs
 
     def get_num_nodes(self):
         """
@@ -211,10 +222,11 @@ def format_nodes(connection):
     Returns Nodes formatted in Dash friendly manner.
     :return: list of Dicts
     """
-    nodes = connection.get_nodes()
+    connection: ShepherdConnection
+    pairs = connection.get_node_name_pairs()
     res = []
-    for node in nodes:
-        res.append({'label': f'Node {node}', 'value': node})
+    for node, name in pairs:
+        res.append({'label': f'{name}', 'value': node})
     return res
 
 

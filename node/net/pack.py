@@ -22,6 +22,7 @@ class NetworkSubscriber(Subscriber):
         print(f"Broker Handshake -> {const.SERVER_IP}:{const.BROKER_PORT}")
         # Handle Broker Handshake
         negotiation = Negotiation()
+        negotiation.node_name = const.NODE_NAME
         mem = node.memory.read_ids()
         if mem is False:
             print("No memory found, requesting new ID.")

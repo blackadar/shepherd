@@ -2,7 +2,7 @@
 Auto-Generated Code by sqlacodegen
 https://pypi.org/project/sqlacodegen/
 """
-from sqlalchemy import BigInteger, Column, DateTime, Enum, Float, ForeignKey, ForeignKeyConstraint, Index, Integer, String
+from sqlalchemy import BigInteger, Column, DateTime, Enum, Float, ForeignKey, ForeignKeyConstraint, Index, Integer, String, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,6 +23,7 @@ class Node(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     pool_id = Column(ForeignKey('Pool.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
+    name = Column(String(100), server_default=text("'Node'"))
     pool = relationship('Pool', back_populates='nodes')
     updates = relationship('Update')
 
