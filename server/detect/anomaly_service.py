@@ -216,7 +216,7 @@ def main():
     while True:
         detect(session, last_run, const.POOL_ID)
         last_run = datetime.datetime.now()
-        time.sleep(5)
+        time.sleep(10)
 
 
 if __name__ == '__main__':
